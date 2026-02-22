@@ -1,0 +1,278 @@
+{
+  "skill": "JavaScript",
+  "questions": [
+    {
+      "id": "JS_B1",
+      "level": "Beginner",
+      "question": "What's the difference between undefined and not defined in JavaScript?",
+      "keywords": ["undefined", "not defined", "ReferenceError", "scope", "variable"],
+      "marks": 4
+    },
+    {
+      "id": "JS_T1",
+      "level": "Trap",
+      "question": "For which value of x are these not the same? if (x <= 100) and if (!(x > 100))",
+      "keywords": ["NaN", "comparison", "logical negation", "edge cases", "coercion"],
+      "marks": 5
+    },
+    {
+      "id": "JS_D1",
+      "level": "Depth",
+      "question": "What is closure in JavaScript? Provide an example.",
+      "keywords": ["closure", "lexical scope", "inner function", "private variables"],
+      "marks": 5
+    },
+    {
+      "id": "JS_S1",
+      "level": "Scenario",
+      "question": "Write a mul function that works like mul(2)(3)(4) and returns 24.",
+      "keywords": ["currying", "closures", "function chaining"],
+      "marks": 6
+    },
+    {
+      "id": "JS_B2",
+      "level": "Beginner",
+      "question": "How to empty an array in JavaScript?",
+      "keywords": ["array", "length", "splice", "clear", "reference"],
+      "marks": 4
+    },
+    {
+      "id": "JS_B3",
+      "level": "Beginner",
+      "question": "How to check if an object is an array or not?",
+      "keywords": ["Array.isArray", "typeof", "instanceof", "Object.prototype.toString"],
+      "marks": 4
+    },
+    {
+      "id": "JS_B4",
+      "level": "Beginner",
+      "question": "How to check whether a key exists in a JavaScript object?",
+      "keywords": ["in", "hasOwnProperty", "Object.hasOwn", "undefined"],
+      "marks": 4
+    },
+    {
+      "id": "JS_T2",
+      "level": "Trap",
+      "question": "Explain what delete does in JavaScript (parameters, variables, object properties).",
+      "keywords": ["delete operator", "object property", "variable", "function parameter"],
+      "marks": 5
+    },
+    {
+      "id": "JS_D2",
+      "level": "Depth",
+      "question": "What is the drawback of declaring methods directly inside JavaScript objects?",
+      "keywords": ["memory", "duplicate functions", "prototype", "performance"],
+      "marks": 5
+    },
+    {
+      "id": "JS_D3",
+      "level": "Depth",
+      "question": "What’s the difference between typeof and instanceof?",
+      "keywords": ["typeof", "instanceof", "prototype chain", "primitives"],
+      "marks": 5
+    },
+    {
+      "id": "JS_D4",
+      "level": "Depth",
+      "question": "What is IIFE (Immediately Invoked Function Expression) and how is it useful?",
+      "keywords": ["IIFE", "scope", "encapsulation", "immediately invoked"],
+      "marks": 5
+    },
+    {
+      "id": "JS_D5",
+      "level": "Depth",
+      "question": "Difference between function declaration and function expression.",
+      "keywords": ["function declaration", "function expression", "hoisting"],
+      "marks": 5
+    },
+    {
+      "id": "JS_T3",
+      "level": "Trap",
+      "question": "In which case is a function NOT hoisted in JavaScript?",
+      "keywords": ["hoisting", "function expression", "var", "let", "const"],
+      "marks": 5
+    },
+    {
+      "id": "JS_T4",
+      "level": "Trap",
+      "question": "Explain variable hoisting with an example where a variable becomes undefined inside a function due to shadowing.",
+      "keywords": ["hoisting", "shadowing", "var", "scope"],
+      "marks": 6
+    },
+    {
+      "id": "JS_T5",
+      "level": "Trap",
+      "question": "What is NaN? Difference between isNaN() and Number.isNaN().",
+      "keywords": ["NaN", "isNaN", "Number.isNaN", "type coercion"],
+      "marks": 5
+    },
+    {
+      "id": "JS_D6",
+      "level": "Depth",
+      "question": "What are promises and how are they useful?",
+      "keywords": ["Promise", "then", "catch", "async", "resolve", "reject"],
+      "marks": 5
+    },
+    {
+      "id": "JS_S2",
+      "level": "Scenario",
+      "question": "How to replace callback hell using Promises or async/await?",
+      "keywords": ["callback hell", "promises", "async await", "refactor"],
+      "marks": 6
+    },
+    {
+      "id": "JS_T6",
+      "level": "Trap",
+      "question": "Fix the setTimeout loop bug using ES5 only (var i closure issue).",
+      "keywords": ["setTimeout", "closure", "var", "IIFE", "loop"],
+      "marks": 6
+    },
+    {
+      "id": "JS_D7",
+      "level": "Depth",
+      "question": "How does Object.create work in JavaScript?",
+      "keywords": ["Object.create", "prototype", "inheritance", "prototype chain"],
+      "marks": 5
+    },
+    {
+      "id": "JS_D8",
+      "level": "Depth",
+      "question": "How to implement inheritance using constructor functions in JavaScript?",
+      "keywords": ["constructor", "prototype", "inheritance", "call", "apply"],
+      "marks": 6
+    },
+    {
+      "id": "JS_D9",
+      "level": "Depth",
+      "question": "Difference between Function call, Method call, and Constructor call in JavaScript.",
+      "keywords": ["this", "new", "method", "function call", "constructor"],
+      "marks": 5
+    },
+    {
+      "id": "JS_T7",
+      "level": "Trap",
+      "question": "Explain how this behaves in JavaScript inside nested functions vs inside object methods.",
+      "keywords": ["this", "context", "global", "method call", "scope loss"],
+      "marks": 6
+    },
+    {
+      "id": "JS_D10",
+      "level": "Depth",
+      "question": "What is function binding? Explain call(), apply(), bind().",
+      "keywords": ["bind", "call", "apply", "this", "context"],
+      "marks": 6
+    },
+    {
+      "id": "JS_D11",
+      "level": "Depth",
+      "question": "How can we prevent modification of objects in JavaScript?",
+      "keywords": ["Object.freeze", "Object.seal", "Object.preventExtensions"],
+      "marks": 5
+    },
+    {
+      "id": "JS_D12",
+      "level": "Depth",
+      "question": "What is a non-enumerable property in JavaScript and how do you create it?",
+      "keywords": ["enumerable", "Object.defineProperty", "Object.keys", "property descriptors"],
+      "marks": 6
+    },
+    {
+      "id": "JS_S3",
+      "level": "Scenario",
+      "question": "Write code to merge two JavaScript objects dynamically.",
+      "keywords": ["merge", "Object.assign", "spread", "copy properties"],
+      "marks": 5
+    },
+    {
+      "id": "JS_S4",
+      "level": "Scenario",
+      "question": "Write a deepClone function to deep copy an object.",
+      "keywords": ["deep clone", "nested objects", "recursion", "structuredClone"],
+      "marks": 6
+    },
+    {
+      "id": "JS_S5",
+      "level": "Scenario",
+      "question": "Write a shallow Clone function and explain shallow vs deep copy.",
+      "keywords": ["shallow clone", "Object.assign", "spread operator", "reference"],
+      "marks": 6
+    },
+    {
+      "id": "JS_D13",
+      "level": "Depth",
+      "question": "Difference between slice() and splice() in JavaScript arrays.",
+      "keywords": ["slice", "splice", "mutation", "copy", "remove"],
+      "marks": 5
+    },
+    {
+      "id": "JS_T8",
+      "level": "Trap",
+      "question": "Explain why array.sort() fails for numeric sorting by default and how to fix it.",
+      "keywords": ["sort", "lexicographic", "compare function", "numbers"],
+      "marks": 5
+    },
+    {
+      "id": "JS_B5",
+      "level": "Beginner",
+      "question": "How to check if a value exists in an array?",
+      "keywords": ["includes", "indexOf", "find", "some"],
+      "marks": 4
+    },
+    {
+      "id": "JS_D14",
+      "level": "Depth",
+      "question": "Explain pass-by-value vs pass-by-reference behavior in JavaScript.",
+      "keywords": ["reference", "value", "objects", "arrays", "immutability"],
+      "marks": 6
+    },
+    {
+      "id": "JS_D15",
+      "level": "Depth",
+      "question": "What are the ways of creating objects in JavaScript?",
+      "keywords": ["object literal", "constructor", "Object.create", "class", "new"],
+      "marks": 5
+    },
+    {
+      "id": "JS_D16",
+      "level": "Depth",
+      "question": "What is Singleton Pattern in JavaScript?",
+      "keywords": ["singleton", "design pattern", "module pattern", "closure"],
+      "marks": 5
+    },
+    {
+      "id": "JS_D17",
+      "level": "Depth",
+      "question": "How to set default parameter values in JavaScript?",
+      "keywords": ["default parameters", "undefined", "fallback"],
+      "marks": 4
+    },
+    {
+      "id": "JS_D18",
+      "level": "Depth",
+      "question": "What is a typical use case for anonymous functions in JavaScript?",
+      "keywords": ["anonymous function", "callbacks", "events", "IIFE"],
+      "marks": 4
+    },
+    {
+      "id": "JS_S6",
+      "level": "Scenario",
+      "question": "Write a log() wrapper that prefixes every console.log message.",
+      "keywords": ["console.log", "wrapper", "prefix", "closure"],
+      "marks": 5
+    },
+    {
+      "id": "JS_T9",
+      "level": "Trap",
+      "question": "Explain object equality in JavaScript (== vs === for objects).",
+      "keywords": ["object equality", "reference equality", "==", "==="],
+      "marks": 5
+    },
+    {
+      "id": "JS_D19",
+      "level": "Depth",
+      "question": "What are Service Workers and when can you use them?",
+      "keywords": ["service worker", "pwa", "offline cache", "push notifications"],
+      "marks": 5
+    }
+  ]
+}

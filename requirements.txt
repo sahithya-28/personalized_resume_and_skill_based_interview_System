@@ -1,0 +1,6 @@
+﻿pdfplumber
+python-docx
+reportlab
+fastapi
+uvicorn[standard]
+python-multipart

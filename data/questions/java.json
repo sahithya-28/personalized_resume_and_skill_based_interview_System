@@ -1,0 +1,299 @@
+{
+  "skill": "Java",
+  "questions": [
+    {
+      "id": "JAVA_B1",
+      "level": "Beginner",
+      "question": "Explain the main idea behind Java and the concept of Write Once, Run Anywhere.",
+      "keywords": ["write once run anywhere", "platform independent", "jvm", "bytecode", "standard library"],
+      "marks": 5
+    },
+    {
+      "id": "JAVA_B2",
+      "level": "Beginner",
+      "question": "What are the main features of Java?",
+      "keywords": ["oop", "platform independence", "security", "garbage collection", "multithreading", "jit", "portability"],
+      "marks": 4
+    },
+    {
+      "id": "JAVA_B3",
+      "level": "Beginner",
+      "question": "Can you list some non-object-oriented features of Java?",
+      "keywords": ["primitive types", "static methods", "procedural style", "utility classes", "single inheritance", "package-private"],
+      "marks": 4
+    },
+    {
+      "id": "JAVA_B4",
+      "level": "Beginner",
+      "question": "Describe the difference between JDK, JRE, and JVM.",
+      "keywords": ["jdk", "jre", "jvm", "compiler", "runtime", "bytecode execution", "tools"],
+      "marks": 5
+    },
+    {
+      "id": "JAVA_B5",
+      "level": "Beginner",
+      "question": "Can you explain the difference between an int and an Integer in Java?",
+      "keywords": ["primitive", "wrapper class", "autoboxing", "unboxing", "null", "performance", "generics"],
+      "marks": 4
+    },
+    {
+      "id": "JAVA_B6",
+      "level": "Beginner",
+      "question": "What are wrapper classes in Java?",
+      "keywords": ["wrapper class", "primitive to object", "collections", "autoboxing", "unboxing", "utility methods", "nullability"],
+      "marks": 4
+    },
+    {
+      "id": "JAVA_B7",
+      "level": "Beginner",
+      "question": "What does it mean that Java is a statically typed language?",
+      "keywords": ["static typing", "compile time", "type safety", "explicit types", "casting", "compile error"],
+      "marks": 4
+    },
+    {
+      "id": "JAVA_B8",
+      "level": "Beginner",
+      "question": "Is Java a pure object-oriented language? Why or why not?",
+      "keywords": ["not pure oop", "primitive types", "static members", "procedural constructs", "oop principles"],
+      "marks": 4
+    },
+    {
+      "id": "JAVA_B9",
+      "level": "Beginner",
+      "question": "What is the purpose of the 'final' keyword?",
+      "keywords": ["final variable", "final method", "final class", "immutability", "no override", "constant reference"],
+      "marks": 4
+    },
+    {
+      "id": "JAVA_B10",
+      "level": "Beginner",
+      "question": "What is the significance of 'this' keyword in Java?",
+      "keywords": ["this keyword", "current object", "constructor chaining", "instance variables", "method chaining", "passing this"],
+      "marks": 4
+    },
+    {
+      "id": "JAVA_B11",
+      "level": "Beginner",
+      "question": "What is the difference between '==' and 'equals()' in Java?",
+      "keywords": ["== operator", "equals method", "reference comparison", "value comparison", "object equality", "string comparison"],
+      "marks": 4
+    },
+    {
+      "id": "JAVA_B12",
+      "level": "Beginner",
+      "question": "How can you suppress unchecked warning in Java?",
+      "keywords": ["suppresswarnings", "unchecked", "compiler warning", "generics", "annotation"],
+      "marks": 3
+    },
+    {
+      "id": "JAVA_B13",
+      "level": "Beginner",
+      "question": "What is a parameterized or generic type?",
+      "keywords": ["generic type", "type parameter", "parameterized type", "type safety", "collections"],
+      "marks": 4
+    },
+    {
+      "id": "JAVA_B16",
+      "level": "Beginner",
+      "question": "What are Annotations and which predefined by the language specification does one know (@Deprecated, @Override, @SuppressWarnings)?",
+      "keywords": ["annotations", "deprecated", "override", "suppresswarnings", "safevarargs", "metadata"],
+      "marks": 4
+    },
+    {
+      "id": "JAVA_B22",
+      "level": "Beginner",
+      "question": "What is serialization?",
+      "keywords": ["serialization", "object state", "byte stream", "serializable", "persistence"],
+      "marks": 4
+    },
+    {
+      "id": "JAVA_B23",
+      "level": "Beginner",
+      "question": "What is the common usage of serialization?",
+      "keywords": ["serialization", "networking", "persistence", "caching", "rmi"],
+      "marks": 4
+    },
+    {
+      "id": "JAVA_B24",
+      "level": "Beginner",
+      "question": "What is a stream and what are the types of Streams and classes of the Streams?",
+      "keywords": ["stream", "byte stream", "character stream", "inputstream", "outputstream", "reader", "writer"],
+      "marks": 4
+    },
+    {
+      "id": "JAVA_B25",
+      "level": "Beginner",
+      "question": "What is the difference between Reader/Writer and InputStream/Output Stream?",
+      "keywords": ["reader", "writer", "inputstream", "outputstream", "bytes", "characters", "encoding"],
+      "marks": 4
+    },
+    {
+      "id": "JAVA_D1",
+      "level": "Depth",
+      "question": "What is the role of the ClassLoader?",
+      "keywords": ["classloader", "loading classes", "linking", "initialization", "bootstrap", "delegation model", "dynamic loading"],
+      "marks": 5
+    },
+    {
+      "id": "JAVA_D3",
+      "level": "Depth",
+      "question": "What is bytecode in the context of Java?",
+      "keywords": ["bytecode", "javac", "jvm", "platform independent", "jit compilation", "javap", "verification"],
+      "marks": 5
+    },
+    {
+      "id": "JAVA_D4",
+      "level": "Depth",
+      "question": "How does garbage collection work in Java?",
+      "keywords": ["garbage collection", "reachability", "heap", "reference types", "mark sweep", "generational gc", "g1"],
+      "marks": 5
+    },
+    {
+      "id": "JAVA_D5",
+      "level": "Depth",
+      "question": "What is Generics in Java? What are advantages of using Generics?",
+      "keywords": ["generics", "type safety", "collections", "compile time", "type parameters"],
+      "marks": 5
+    },
+    {
+      "id": "JAVA_D6",
+      "level": "Depth",
+      "question": "How Generics works in Java? What is type erasure?",
+      "keywords": ["generics", "type erasure", "compile time", "runtime", "bounds", "object"],
+      "marks": 5
+    },
+    {
+      "id": "JAVA_D7",
+      "level": "Depth",
+      "question": "What is Bounded and Unbounded wildcards in Generics?",
+      "keywords": ["wildcard", "bounded", "unbounded", "extends", "super", "family of types"],
+      "marks": 5
+    },
+    {
+      "id": "JAVA_D8",
+      "level": "Depth",
+      "question": "What is difference between List<? extends T> and List<? super T>?",
+      "keywords": ["extends", "super", "covariance", "contravariance", "read vs write", "subtype"],
+      "marks": 5
+    },
+    {
+      "id": "JAVA_D11",
+      "level": "Depth",
+      "question": "Problems Enum type solves (comparing to \"public static int\" enum pattern)",
+      "keywords": ["enum", "type safety", "singleton", "constant specific behavior", "readability"],
+      "marks": 5
+    },
+    {
+      "id": "JAVA_D15",
+      "level": "Depth",
+      "question": "How can I customize the serialization process?",
+      "keywords": ["writeObject", "readObject", "transient", "serialversionuid", "custom serialization"],
+      "marks": 5
+    },
+    {
+      "id": "JAVA_D16",
+      "level": "Depth",
+      "question": "What is Externalizable interface?",
+      "keywords": ["externalizable", "serialization control", "writeExternal", "readExternal", "custom format"],
+      "marks": 5
+    },
+    {
+      "id": "JAVA_D17",
+      "level": "Depth",
+      "question": "When you serialize an object, what happens to the object references included in the object?",
+      "keywords": ["serialization", "object graph", "references", "deep serialization", "handle table"],
+      "marks": 5
+    },
+    {
+      "id": "JAVA_D18",
+      "level": "Depth",
+      "question": "What one should take care of while serializing the object?",
+      "keywords": ["serialversionuid", "transient", "compatibility", "security", "validation"],
+      "marks": 5
+    },
+    {
+      "id": "JAVA_D19",
+      "level": "Depth",
+      "question": "Does Java provide any construct to find out the size of an object?",
+      "keywords": ["object size", "instrumentation", "memory", "heap", "java object layout"],
+      "marks": 5
+    },
+    {
+      "id": "JAVA_D20",
+      "level": "Depth",
+      "question": "What is an I/O filter?",
+      "keywords": ["io filter", "filterinputstream", "filteroutputstream", "buffering", "decorator pattern"],
+      "marks": 5
+    },
+    {
+      "id": "JAVA_S1",
+      "level": "Scenario",
+      "question": "How to write a generic method which accepts generic argument and return Generic Type?",
+      "keywords": ["generic method", "type parameter", "return type", "static generic method", "method signature"],
+      "marks": 5
+    },
+    {
+      "id": "JAVA_S2",
+      "level": "Scenario",
+      "question": "How to write parametrized class in Java using Generics?",
+      "keywords": ["generic class", "type parameters", "bounded type", "extends comparable", "k v"],
+      "marks": 5
+    },
+    {
+      "id": "JAVA_S3",
+      "level": "Scenario",
+      "question": "Suppose you would like to reuse a class in different contexts would you use annotations or external configuration?",
+      "keywords": ["annotations", "external configuration", "xml", "dependencies", "reuse", "design choice"],
+      "marks": 5
+    },
+    {
+      "id": "JAVA_S4",
+      "level": "Scenario",
+      "question": "How do I serialize an object to a file?",
+      "keywords": ["objectoutputstream", "fileoutputstream", "writeobject", "serialization", "file"],
+      "marks": 5
+    },
+    {
+      "id": "JAVA_T1",
+      "level": "Trap",
+      "question": "Can we overload or override static methods in Java?",
+      "keywords": ["static methods", "overloading", "overriding", "method hiding", "compile time binding", "inheritance"],
+      "marks": 5
+    },
+    {
+      "id": "JAVA_T2",
+      "level": "Trap",
+      "question": "Can you pass List<String> to a method which accepts List<Object>?",
+      "keywords": ["generics invariance", "list string", "list object", "type safety", "polymorphism"],
+      "marks": 5
+    },
+    {
+      "id": "JAVA_T3",
+      "level": "Trap",
+      "question": "Difference between List<Object> and raw type List in Java?",
+      "keywords": ["raw type", "list object", "type safety", "unchecked warnings", "legacy code"],
+      "marks": 5
+    },
+    {
+      "id": "JAVA_T4",
+      "level": "Trap",
+      "question": "Can we use parameterized types in exception handling?",
+      "keywords": ["generics", "exceptions", "type erasure", "catch", "runtime", "throws clause"],
+      "marks": 5
+    },
+    {
+      "id": "JAVA_T5",
+      "level": "Trap",
+      "question": "Which methods of Serializable interface should I implement?",
+      "keywords": ["serializable", "marker interface", "no methods", "serialversionuid", "custom serialization"],
+      "marks": 5
+    },
+    {
+      "id": "JAVA_T6",
+      "level": "Trap",
+      "question": "What happens to the static fields of a class during serialization?",
+      "keywords": ["static fields", "serialization", "class level data", "not serialized", "transient"],
+      "marks": 5
+    }
+  ]
+}

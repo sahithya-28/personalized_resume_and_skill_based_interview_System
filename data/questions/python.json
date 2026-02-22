@@ -1,0 +1,201 @@
+{
+  "skill": "Python",
+  "questions": [
+    {
+      "id": "PY_T5",
+      "level": "Trap",
+      "question": "Is Python strongly typed or weakly typed? Explain with example.",
+      "keywords": ["strong typing", "type safety", "TypeError", "implicit conversion"],
+      "marks": 6
+    },
+    {
+      "id": "PY_B14",
+      "level": "Beginner",
+      "question": "How do you create a Unicode string in Python?",
+      "keywords": ["unicode", "u prefix", "python2 vs python3"],
+      "marks": 3
+    },
+    {
+      "id": "PY_T6",
+      "level": "Trap",
+      "question": "Does Python support switch-case? If not, what alternatives are used?",
+      "keywords": ["switch", "if-elif", "dict dispatch", "match case"],
+      "marks": 4
+    },
+    {
+      "id": "PY_D14",
+      "level": "Depth",
+      "question": "Explain local vs global variables in Python. How does the global keyword work?",
+      "keywords": ["scope", "local", "global", "global keyword", "name binding"],
+      "marks": 6
+    },
+    {
+      "id": "PY_T7",
+      "level": "Trap",
+      "question": "Explain the mutable default argument problem in Python with an example.",
+      "keywords": ["default args", "mutable", "list", "function call", "bug"],
+      "marks": 7
+    },
+    {
+      "id": "PY_S5",
+      "level": "Scenario",
+      "question": "Why do we write #!/usr/bin/python at the beginning of a script? What advantage does it give?",
+      "keywords": ["shebang", "unix", "executable script", "interpreter path"],
+      "marks": 5
+    },
+    {
+      "id": "PY_T8",
+      "level": "Trap",
+      "question": "What happens when you access list[10] vs list[10:] when the list is smaller?",
+      "keywords": ["IndexError", "slicing", "out of bounds", "empty list"],
+      "marks": 5
+    },
+    {
+      "id": "PY_D15",
+      "level": "Depth",
+      "question": "Do sets, dictionaries and tuples support comprehensions?",
+      "keywords": ["set comprehension", "dict comprehension", "tuple", "generator expression"],
+      "marks": 5
+    },
+    {
+      "id": "PY_B15",
+      "level": "Beginner",
+      "question": "What are mutable and immutable data types in Python?",
+      "keywords": ["mutable", "immutable", "list", "dict", "tuple", "string"],
+      "marks": 4
+    },
+    {
+      "id": "PY_S6",
+      "level": "Scenario",
+      "question": "When should you use generator expressions vs list comprehensions?",
+      "keywords": ["generator expression", "list comprehension", "memory", "lazy evaluation"],
+      "marks": 6
+    },
+    {
+      "id": "PY_S7",
+      "level": "Scenario",
+      "question": "When is it NOT a good time to use generators?",
+      "keywords": ["generators", "random access", "multiple passes", "caching"],
+      "marks": 6
+    },
+    {
+      "id": "PY_D16",
+      "level": "Depth",
+      "question": "What is self in Python? Why is it used?",
+      "keywords": ["self", "instance", "methods", "class", "object"],
+      "marks": 5
+    },
+    {
+      "id": "PY_D17",
+      "level": "Depth",
+      "question": "What is __init__.py and why is it used?",
+      "keywords": ["package", "__init__.py", "module", "import"],
+      "marks": 5
+    },
+    {
+      "id": "PY_S8",
+      "level": "Scenario",
+      "question": "How do you print contents of a file with proper error handling?",
+      "keywords": ["try except", "with", "open", "IOError", "FileNotFoundError"],
+      "marks": 6
+    },
+    {
+      "id": "PY_D18",
+      "level": "Depth",
+      "question": "Does Python support multithreading? What limits it in CPython?",
+      "keywords": ["multithreading", "CPython", "GIL", "concurrency"],
+      "marks": 7
+    },
+    {
+      "id": "PY_D19",
+      "level": "Depth",
+      "question": "What is the GIL and how does it impact concurrency?",
+      "keywords": ["GIL", "threads", "multi-core", "CPython", "C extensions"],
+      "marks": 8
+    },
+    {
+      "id": "PY_S9",
+      "level": "Scenario",
+      "question": "How do you list all files and directories in a folder in Python?",
+      "keywords": ["os.listdir", "os.walk", "path", "directory traversal"],
+      "marks": 5
+    },
+    {
+      "id": "PY_B16",
+      "level": "Beginner",
+      "question": "How do you convert a string to lowercase and uppercase in Python?",
+      "keywords": ["lower()", "upper()", "string methods"],
+      "marks": 3
+    },
+    {
+      "id": "PY_B17",
+      "level": "Beginner",
+      "question": "How do you check whether one string is a substring of another?",
+      "keywords": ["in operator", "substring", "string search"],
+      "marks": 3
+    },
+    {
+      "id": "PY_D20",
+      "level": "Depth",
+      "question": "How do you find all occurrences of a substring in a string?",
+      "keywords": ["regex", "re.finditer", "indices", "substring matches"],
+      "marks": 6
+    },
+    {
+      "id": "PY_B18",
+      "level": "Beginner",
+      "question": "How do you find the index of an element in a list?",
+      "keywords": ["list.index", "search"],
+      "marks": 3
+    },
+    {
+      "id": "PY_D21",
+      "level": "Depth",
+      "question": "How do you iterate over a list and get both index and element?",
+      "keywords": ["enumerate", "loop", "index"],
+      "marks": 5
+    },
+    {
+      "id": "PY_D22",
+      "level": "Depth",
+      "question": "How does Python list.sort work at a high level? Is it stable? What is runtime complexity?",
+      "keywords": ["Timsort", "stable sort", "O(n log n)", "sorting"],
+      "marks": 8
+    },
+    {
+      "id": "PY_D23",
+      "level": "Depth",
+      "question": "How do you pass optional/keyword arguments from one function to another?",
+      "keywords": ["*args", "**kwargs", "forwarding", "unpacking"],
+      "marks": 6
+    },
+    {
+      "id": "PY_D24",
+      "level": "Depth",
+      "question": "What is a higher-order function in Python? Give an example.",
+      "keywords": ["higher order", "functions", "functools", "partial"],
+      "marks": 6
+    },
+    {
+      "id": "PY_D25",
+      "level": "Depth",
+      "question": "What is map() in Python and how does it work?",
+      "keywords": ["map", "iterable", "function", "lazy"],
+      "marks": 5
+    },
+    {
+      "id": "PY_B19",
+      "level": "Beginner",
+      "question": "How do you print every other element in a list?",
+      "keywords": ["slicing", "step", "list[::2]"],
+      "marks": 3
+    },
+    {
+      "id": "PY_T9",
+      "level": "Trap",
+      "question": "Why is not all memory freed when Python exits?",
+      "keywords": ["globals", "circular references", "C library allocations", "cleanup"],
+      "marks": 7
+    }
+  ]
+}

@@ -1,0 +1,455 @@
+{
+  "skill": "ML",
+  "questions":[
+  {
+    "id": "ML_B1",
+    "level": "Core",
+    "question": "What is Machine Learning (ML) and how does it differ from AI and Data Science?",
+    "keywords": ["AI vs ML vs Data Science", "learning from data", "prediction", "insights"]
+  },
+  {
+    "id": "ML_B2",
+    "level": "Core",
+    "question": "What is overfitting and how can it be avoided?",
+    "keywords": ["overfitting", "generalization", "regularization", "cross-validation", "early stopping", "dropout"]
+  },
+  {
+    "id": "ML_B3",
+    "level": "Core",
+    "question": "What is underfitting and how can it be avoided?",
+    "keywords": ["underfitting", "simple model", "feature engineering", "increase complexity"]
+  },
+  {
+    "id": "ML_B4",
+    "level": "Core",
+    "question": "What is regularization in ML?",
+    "keywords": ["regularization", "L1", "L2", "Elastic Net", "penalty term", "overfitting control"]
+  },
+  {
+    "id": "ML_B5",
+    "level": "Core",
+    "question": "Explain Lasso and Ridge regularization. How does Elastic Net help?",
+    "keywords": ["Lasso", "Ridge", "Elastic Net", "feature selection", "correlated features"]
+  },
+  {
+    "id": "ML_E1",
+    "level": "Core",
+    "question": "What are different model evaluation techniques in Machine Learning?",
+    "keywords": ["train-test split", "cross-validation", "confusion matrix", "ROC-AUC", "loss functions"]
+  },
+  {
+    "id": "ML_E2",
+    "level": "Core",
+    "question": "Explain Confusion Matrix.",
+    "keywords": ["TP", "TN", "FP", "FN", "classification evaluation"]
+  },
+  {
+    "id": "ML_E3",
+    "level": "Core",
+    "question": "What is the difference between Precision and Recall? How does F1-score combine both?",
+    "keywords": ["precision", "recall", "F1-score", "imbalanced dataset"]
+  },
+  {
+    "id": "ML_E4",
+    "level": "Trap",
+    "question": "Is accuracy always a good metric for classification performance?",
+    "keywords": ["imbalanced data", "precision", "recall", "F1-score", "accuracy misleading"]
+  },
+  {
+    "id": "ML_E5",
+    "level": "Core",
+    "question": "What is Cross-Validation? Explain k-fold, LOO and Hold-out method.",
+    "keywords": ["k-fold", "leave-one-out", "hold-out", "generalization"]
+  },
+  {
+    "id": "ML_L1",
+    "level": "Core",
+    "question": "What are different loss functions in ML?",
+    "keywords": ["MSE", "MAE", "Huber", "Cross Entropy", "Hinge loss", "KL divergence"]
+  },
+  {
+    "id": "ML_L2",
+    "level": "Core",
+    "question": "What is ROC Curve and AUC?",
+    "keywords": ["ROC", "AUC", "TPR", "FPR", "threshold", "classifier performance"]
+  },
+  {
+    "id": "ML_P1",
+    "level": "Core",
+    "question": "Difference between Regularization, Standardization and Normalization?",
+    "keywords": ["L1/L2", "z-score", "min-max scaling", "feature scaling"]
+  },
+  {
+    "id": "ML_P2",
+    "level": "Core",
+    "question": "What is Feature Engineering in Machine Learning?",
+    "keywords": ["feature creation", "feature transformation", "encoding", "improving accuracy"]
+  },
+  {
+    "id": "ML_P3",
+    "level": "Core",
+    "question": "Difference between Feature Engineering and Feature Selection?",
+    "keywords": ["feature creation", "feature subset", "reduce noise", "simplify model"]
+  },
+  {
+    "id": "ML_P4",
+    "level": "Core",
+    "question": "What are Feature Selection techniques?",
+    "keywords": ["filter methods", "wrapper methods", "embedded methods", "RFE", "Lasso"]
+  },
+  {
+    "id": "ML_P5",
+    "level": "Core",
+    "question": "What is Dimensionality Reduction in Machine Learning?",
+    "keywords": ["reduce features", "PCA", "speed", "overfitting reduction"]
+  },
+  {
+    "id": "ML_P6",
+    "level": "Core",
+    "question": "What is categorical data and how to handle it?",
+    "keywords": ["nominal", "ordinal", "one-hot encoding", "label encoding", "target encoding"]
+  },
+  {
+    "id": "ML_P7",
+    "level": "Trap",
+    "question": "Difference between Label Encoding and One-Hot Encoding?",
+    "keywords": ["false order", "dimensionality", "nominal vs ordinal"]
+  },
+  {
+    "id": "ML_P8",
+    "level": "Core",
+    "question": "What is upsampling and downsampling?",
+    "keywords": ["imbalanced data", "oversampling", "undersampling", "class balance"]
+  },
+  {
+    "id": "ML_P9",
+    "level": "Core",
+    "question": "Explain SMOTE method used to handle data imbalance.",
+    "keywords": ["SMOTE", "synthetic samples", "minority class", "interpolation"]
+  },
+  {
+    "id": "ML_P10",
+    "level": "Core",
+    "question": "How to handle missing and duplicate values?",
+    "keywords": ["dropna", "imputation", "drop_duplicates", "flag missing"]
+  },
+  {
+    "id": "ML_P11",
+    "level": "Core",
+    "question": "What are outliers and how to handle them?",
+    "keywords": ["IQR", "z-score", "winsorization", "robust models", "remove outliers"]
+  },
+  {
+    "id": "ML_R1",
+    "level": "Core",
+    "question": "What is Linear Regression? What are its assumptions?",
+    "keywords": ["linearity", "homoscedasticity", "normal residuals", "multicollinearity"]
+  },
+  {
+    "id": "ML_R2",
+    "level": "Core",
+    "question": "How sigmoid works in Logistic Regression and why it is not a regression model?",
+    "keywords": ["sigmoid", "probability", "binary classification", "threshold"]
+  },
+  {
+    "id": "ML_M1",
+    "level": "Core",
+    "question": "What is Multicollinearity and why is it a problem?",
+    "keywords": ["high correlation", "unstable coefficients", "interpretability", "VIF"]
+  },
+  {
+    "id": "ML_M2",
+    "level": "Core",
+    "question": "What is Variance Inflation Factor (VIF)?",
+    "keywords": ["VIF formula", "R^2", "detect multicollinearity"]
+  },
+  {
+    "id": "ML_DT1",
+    "level": "Core",
+    "question": "What is Information Gain and Entropy in Decision Tree?",
+    "keywords": ["entropy", "information gain", "best split", "impurity reduction"]
+  },
+  {
+    "id": "ML_DT2",
+    "level": "Core",
+    "question": "How to prevent overfitting in Decision Trees?",
+    "keywords": ["max depth", "min samples leaf", "pruning", "random forest"]
+  },
+  {
+    "id": "ML_DT3",
+    "level": "Core",
+    "question": "What is Pruning in Decision Trees?",
+    "keywords": ["pre-pruning", "post-pruning", "reduce overfitting"]
+  },
+  {
+    "id": "ML_DT4",
+    "level": "Core",
+    "question": "Explain ID3 and CART.",
+    "keywords": ["ID3", "CART", "Gini", "Entropy", "binary split"]
+  },
+  {
+    "id": "ML_NB1",
+    "level": "Core",
+    "question": "Explain Naive Bayes and Bayes’ Theorem.",
+    "keywords": ["Bayes theorem", "posterior", "prior", "likelihood", "classification"]
+  },
+  {
+    "id": "ML_NB2",
+    "level": "Core",
+    "question": "What are the assumptions of Naive Bayes?",
+    "keywords": ["feature independence", "equal contribution", "Gaussian assumption"]
+  },
+  {
+    "id": "ML_NB3",
+    "level": "Core",
+    "question": "What are the types of Naive Bayes algorithms?",
+    "keywords": ["Gaussian NB", "Multinomial NB", "Bernoulli NB", "Categorical NB"]
+  },
+  {
+    "id": "ML_KNN1",
+    "level": "Core",
+    "question": "Explain K-Nearest Neighbors (KNN) working.",
+    "keywords": ["distance metric", "neighbors", "majority vote", "regression average"]
+  },
+  {
+    "id": "ML_KNN2",
+    "level": "Trap",
+    "question": "Why is KNN called a lazy algorithm?",
+    "keywords": ["no training", "stores all data", "slow prediction", "memory heavy"]
+  },
+  {
+    "id": "ML_KNN3",
+    "level": "Core",
+    "question": "How does K value affect KNN?",
+    "keywords": ["small K overfit", "large K underfit", "bias variance"]
+  },
+  {
+    "id": "ML_KNN4",
+    "level": "Core",
+    "question": "How to find optimal K in KNN?",
+    "keywords": ["cross-validation", "elbow method", "grid search"]
+  },
+  {
+    "id": "ML_KNN5",
+    "level": "Core",
+    "question": "What is KNN Imputer and how does it work?",
+    "keywords": ["missing values", "neighbors", "mean", "median"]
+  },
+  {
+    "id": "ML_D1",
+    "level": "Core",
+    "question": "What are different distance metrics in Machine Learning?",
+    "keywords": ["euclidean", "manhattan", "minkowski", "cosine", "hamming", "mahalanobis", "jaccard"]
+  },
+  {
+    "id": "ML_SVM1",
+    "level": "Core",
+    "question": "What is decision boundary in SVM?",
+    "keywords": ["hyperplane", "margin", "support vectors"]
+  },
+  {
+    "id": "ML_SVM2",
+    "level": "Core",
+    "question": "Does SVM only work with linear data points?",
+    "keywords": ["non-linear", "kernel trick", "feature transform"]
+  },
+  {
+    "id": "ML_SVM3",
+    "level": "Core",
+    "question": "What is kernel trick? List popular kernels.",
+    "keywords": ["linear kernel", "polynomial", "RBF", "sigmoid"]
+  },
+  {
+    "id": "ML_ENS1",
+    "level": "Core",
+    "question": "What is Ensemble Learning?",
+    "keywords": ["bagging", "boosting", "stacking", "voting", "reduce error"]
+  },
+  {
+    "id": "ML_ENS2",
+    "level": "Core",
+    "question": "Explain Bagging and Boosting.",
+    "keywords": ["parallel vs sequential", "variance reduction", "bias reduction"]
+  },
+  {
+    "id": "ML_RF1",
+    "level": "Core",
+    "question": "What is Random Forest?",
+    "keywords": ["many trees", "bootstrap", "feature randomness", "voting averaging"]
+  },
+  {
+    "id": "ML_RF2",
+    "level": "Core",
+    "question": "What is Bootstrapping?",
+    "keywords": ["sampling with replacement", "diverse training sets"]
+  },
+  {
+    "id": "ML_RF3",
+    "level": "Core",
+    "question": "Which Random Forest hyperparameters help avoid overfitting?",
+    "keywords": ["max_depth", "min_samples_split", "min_samples_leaf", "max_features", "n_estimators"]
+  },
+  {
+    "id": "ML_RF4",
+    "level": "Trap",
+    "question": "Whether decision tree or random forest is more robust to outliers?",
+    "keywords": ["random forest", "aggregation", "reduced outlier impact"]
+  },
+  {
+    "id": "ML_RF5",
+    "level": "Core",
+    "question": "How does Random Forest ensure diversity among trees?",
+    "keywords": ["bagging", "random features", "bootstrap sampling"]
+  },
+  {
+    "id": "ML_GB1",
+    "level": "Core",
+    "question": "Explain AdaBoost, XGBoost and CatBoost.",
+    "keywords": ["weak learners", "gradient boosting", "regularization", "categorical handling"]
+  },
+  {
+    "id": "ML_GB2",
+    "level": "Core",
+    "question": "Difference between Gradient Boosting and CatBoost?",
+    "keywords": ["categorical features", "ordered boosting", "overfitting control"]
+  },
+  {
+    "id": "ML_CL1",
+    "level": "Core",
+    "question": "Explain K-Means clustering.",
+    "keywords": ["centroids", "assign-update", "WCSS", "sensitive initialization"]
+  },
+  {
+    "id": "ML_CL2",
+    "level": "Core",
+    "question": "How to choose an optimal number of clusters?",
+    "keywords": ["elbow method", "silhouette score", "gap statistic"]
+  },
+  {
+    "id": "ML_CL3",
+    "level": "Core",
+    "question": "What is convergence in K-Means?",
+    "keywords": ["centroids stable", "assignments unchanged", "tolerance"]
+  },
+  {
+    "id": "ML_CL4",
+    "level": "Core",
+    "question": "What are advanced versions of K-Means?",
+    "keywords": ["K-Means++", "Mini-batch", "K-Medoids", "Fuzzy C-Means"]
+  },
+  {
+    "id": "ML_HC1",
+    "level": "Core",
+    "question": "What is Hierarchical Clustering?",
+    "keywords": ["agglomerative", "divisive", "dendrogram", "no need K"]
+  },
+  {
+    "id": "ML_HC2",
+    "level": "Core",
+    "question": "Explain linkage methods in Hierarchical Clustering.",
+    "keywords": ["single", "complete", "average", "ward", "centroid"]
+  },
+  {
+    "id": "ML_DB1",
+    "level": "Core",
+    "question": "Explain DBSCAN and OPTICS.",
+    "keywords": ["density based", "eps", "minPts", "noise detection", "varying density"]
+  },
+  {
+    "id": "ML_GMM1",
+    "level": "Core",
+    "question": "Explain GMM, DPMM and Affinity Propagation.",
+    "keywords": ["soft clustering", "EM algorithm", "non-parametric Bayesian", "exemplars"]
+  },
+  {
+    "id": "ML_AR1",
+    "level": "Core",
+    "question": "Explain Association Rule Mining.",
+    "keywords": ["support", "confidence", "lift", "Apriori", "FP-growth"]
+  },
+  {
+    "id": "ML_AR2",
+    "level": "Core",
+    "question": "Explain Apriori vs FP-Growth.",
+    "keywords": ["candidate generation", "FP tree", "large datasets efficiency"]
+  },
+  {
+    "id": "ML_REC1",
+    "level": "Core",
+    "question": "Explain Content-Based Filtering vs Collaborative Filtering.",
+    "keywords": ["item features", "user similarity", "cold start", "recommendation systems"]
+  },
+  {
+    "id": "ML_EM1",
+    "level": "Core",
+    "question": "Explain EM Algorithm.",
+    "keywords": ["E-step", "M-step", "latent variables", "GMM training"]
+  },
+  {
+    "id": "ML_MM1",
+    "level": "Core",
+    "question": "Explain Markov Model and Hidden Markov Model (HMM).",
+    "keywords": ["states", "transition probability", "hidden states", "emissions", "viterbi"]
+  },
+  {
+    "id": "ML_DR1",
+    "level": "Core",
+    "question": "Explain PCA (Principal Component Analysis).",
+    "keywords": ["variance maximization", "eigenvectors", "covariance matrix", "dimensionality reduction"]
+  },
+  {
+    "id": "ML_DR2",
+    "level": "Core",
+    "question": "Why does PCA maximize variance?",
+    "keywords": ["information content", "principal components", "best projection"]
+  },
+  {
+    "id": "ML_DR3",
+    "level": "Core",
+    "question": "Explain NMF, LDA and t-SNE.",
+    "keywords": ["topic modeling", "non-linear visualization", "soft clustering"]
+  },
+  {
+    "id": "ML_MF1",
+    "level": "Core",
+    "question": "Explain Manifold Learning and its techniques.",
+    "keywords": ["Isomap", "LLE", "UMAP", "MDS", "non-linear embeddings"]
+  },
+  {
+    "id": "ML_TS1",
+    "level": "Core",
+    "question": "Explain Time Series Analysis and Forecasting.",
+    "keywords": ["trend", "seasonality", "cycle", "noise", "forecasting"]
+  },
+  {
+    "id": "ML_TS2",
+    "level": "Core",
+    "question": "Explain ARIMA and SARIMA.",
+    "keywords": ["p d q", "seasonality", "stationarity", "forecasting models"]
+  },
+  {
+    "id": "ML_TS3",
+    "level": "Core",
+    "question": "Explain Exponential Smoothing methods.",
+    "keywords": ["SES", "Holt", "Holt-Winters", "short-term forecasting"]
+  },
+  {
+    "id": "ML_CD1",
+    "level": "Trap",
+    "question": "What is concept drift in ML?",
+    "keywords": ["distribution shift", "retraining", "adaptive models", "streaming data"]
+  },
+  {
+    "id": "ML_RL1",
+    "level": "Core",
+    "question": "What is Reinforcement Learning?",
+    "keywords": ["agent", "environment", "reward", "policy", "trial and error"]
+  },
+  {
+    "id": "ML_RL2",
+    "level": "Core",
+    "question": "What is Markov Decision Process (MDP)?",
+    "keywords": ["states", "actions", "transition probability", "reward", "policy"]
+  }
+]
+}

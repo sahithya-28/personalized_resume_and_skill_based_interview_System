@@ -1,0 +1,362 @@
+{
+  "skill": "DBMS / SQL",
+  "questions": [
+    {
+      "id": "DB_B1",
+      "level": "Beginner",
+      "question": "What is a database?",
+      "keywords": ["database", "data", "tables", "organized collection"],
+      "marks": 3
+    },
+    {
+      "id": "DB_B2",
+      "level": "Beginner",
+      "question": "What is DBMS?",
+      "keywords": ["dbms", "database management system", "manage data"],
+      "marks": 3
+    },
+    {
+      "id": "DB_B3",
+      "level": "Beginner",
+      "question": "What is SQL?",
+      "keywords": ["sql", "structured query language", "rdbms", "tables"],
+      "marks": 3
+    },
+    {
+      "id": "DB_B4",
+      "level": "Beginner",
+      "question": "What is RDBMS?",
+      "keywords": ["rdbms", "relational database", "tables", "schema"],
+      "marks": 4
+    },
+    {
+      "id": "DB_B5",
+      "level": "Beginner",
+      "question": "What is a database table?",
+      "keywords": ["table", "rows", "columns", "records", "fields"],
+      "marks": 3
+    },
+    {
+      "id": "DB_B6",
+      "level": "Beginner",
+      "question": "What is a query?",
+      "keywords": ["query", "retrieve data", "result set"],
+      "marks": 3
+    },
+    {
+      "id": "DB_B7",
+      "level": "Beginner",
+      "question": "What is a subquery?",
+      "keywords": ["subquery", "nested query", "inner query", "outer query"],
+      "marks": 4
+    },
+    {
+      "id": "DB_D1",
+      "level": "Depth",
+      "question": "What are the types of subquery?",
+      "keywords": ["correlated subquery", "non correlated subquery"],
+      "marks": 5
+    },
+    {
+      "id": "DB_B8",
+      "level": "Beginner",
+      "question": "What is a primary key?",
+      "keywords": ["primary key", "unique", "not null", "constraint"],
+      "marks": 4
+    },
+    {
+      "id": "DB_D2",
+      "level": "Depth",
+      "question": "What is a foreign key?",
+      "keywords": ["foreign key", "referential integrity", "parent table", "child table"],
+      "marks": 5
+    },
+    {
+      "id": "DB_D3",
+      "level": "Depth",
+      "question": "What is a unique key?",
+      "keywords": ["unique constraint", "null allowed", "uniqueness"],
+      "marks": 4
+    },
+    {
+      "id": "DB_D4",
+      "level": "Depth",
+      "question": "What is the difference between Primary Key and Unique Key?",
+      "keywords": ["primary key", "unique key", "null values", "constraint"],
+      "marks": 5
+    },
+    {
+      "id": "DB_D5",
+      "level": "Depth",
+      "question": "What is the difference between Primary Key and Foreign Key?",
+      "keywords": ["primary key", "foreign key", "referential integrity", "relationships"],
+      "marks": 5
+    },
+    {
+      "id": "DB_B9",
+      "level": "Beginner",
+      "question": "What is a database relationship?",
+      "keywords": ["one to one", "one to many", "many to many", "relationships"],
+      "marks": 4
+    },
+    {
+      "id": "DB_D6",
+      "level": "Depth",
+      "question": "What is database normalization?",
+      "keywords": ["normalization", "reduce redundancy", "data integrity", "1nf", "2nf", "3nf"],
+      "marks": 5
+    },
+    {
+      "id": "DB_D7",
+      "level": "Depth",
+      "question": "What are normal forms in DBMS?",
+      "keywords": ["1nf", "2nf", "3nf", "bcnf", "4nf", "5nf"],
+      "marks": 5
+    },
+    {
+      "id": "DB_D8",
+      "level": "Depth",
+      "question": "What is denormalization?",
+      "keywords": ["denormalization", "redundancy", "performance"],
+      "marks": 5
+    },
+    {
+      "id": "DB_D9",
+      "level": "Depth",
+      "question": "What is data integrity?",
+      "keywords": ["accuracy", "consistency", "constraints", "business rules"],
+      "marks": 4
+    },
+    {
+      "id": "DB_D10",
+      "level": "Depth",
+      "question": "What is a candidate key?",
+      "keywords": ["candidate key", "unique identifier", "primary key selection"],
+      "marks": 5
+    },
+    {
+      "id": "DB_D11",
+      "level": "Depth",
+      "question": "What is ACID property in DBMS?",
+      "keywords": ["acid", "atomicity", "consistency", "isolation", "durability", "transaction"],
+      "marks": 5
+    },
+    {
+      "id": "DB_D12",
+      "level": "Depth",
+      "question": "What are transactions in SQL?",
+      "keywords": ["transaction", "commit", "rollback", "savepoint"],
+      "marks": 5
+    },
+    {
+      "id": "DB_D13",
+      "level": "Depth",
+      "question": "What is the difference between DELETE and TRUNCATE?",
+      "keywords": ["delete", "truncate", "logging", "rollback", "trigger"],
+      "marks": 5
+    },
+    {
+      "id": "DB_D14",
+      "level": "Depth",
+      "question": "What are SQL constraints?",
+      "keywords": ["constraints", "not null", "check", "default", "unique", "primary key", "foreign key"],
+      "marks": 5
+    },
+    {
+      "id": "DB_D15",
+      "level": "Depth",
+      "question": "What is NOT NULL constraint?",
+      "keywords": ["not null", "constraint", "null restriction"],
+      "marks": 4
+    },
+    {
+      "id": "DB_D16",
+      "level": "Depth",
+      "question": "What is CHECK constraint?",
+      "keywords": ["check constraint", "validation", "domain integrity"],
+      "marks": 5
+    },
+    {
+      "id": "DB_D17",
+      "level": "Depth",
+      "question": "What is DEFAULT constraint?",
+      "keywords": ["default constraint", "default value", "insert"],
+      "marks": 5
+    },
+    {
+      "id": "DB_D18",
+      "level": "Depth",
+      "question": "What is an index in DBMS?",
+      "keywords": ["index", "clustered index", "non clustered index", "performance"],
+      "marks": 5
+    },
+    {
+      "id": "DB_T1",
+      "level": "Trap",
+      "question": "What is the difference between clustered index and non-clustered index?",
+      "keywords": ["clustered index", "non clustered index", "data storage", "separate structure"],
+      "marks": 5
+    },
+    {
+      "id": "DB_D19",
+      "level": "Depth",
+      "question": "Why do we need indexes?",
+      "keywords": ["index", "fast retrieval", "read vs write", "dml overhead"],
+      "marks": 5
+    },
+    {
+      "id": "DB_D20",
+      "level": "Depth",
+      "question": "What is a view in SQL?",
+      "keywords": ["view", "virtual table", "named query", "security"],
+      "marks": 5
+    },
+    {
+      "id": "DB_D21",
+      "level": "Depth",
+      "question": "What is the difference between HAVING clause and WHERE clause?",
+      "keywords": ["having", "where", "group by", "aggregate filter"],
+      "marks": 5
+    },
+    {
+      "id": "DB_B10",
+      "level": "Beginner",
+      "question": "What are the types of SQL joins?",
+      "keywords": ["inner join", "left join", "right join", "full join"],
+      "marks": 4
+    },
+    {
+      "id": "DB_D22",
+      "level": "Depth",
+      "question": "What is self join?",
+      "keywords": ["self join", "alias", "same table"],
+      "marks": 5
+    },
+    {
+      "id": "DB_D23",
+      "level": "Depth",
+      "question": "What is cross join?",
+      "keywords": ["cross join", "cartesian product"],
+      "marks": 5
+    },
+    {
+      "id": "DB_B11",
+      "level": "Beginner",
+      "question": "What is UNION and UNION ALL?",
+      "keywords": ["union", "union all", "distinct", "duplicates"],
+      "marks": 4
+    },
+    {
+      "id": "DB_T2",
+      "level": "Trap",
+      "question": "How do GROUP BY and ORDER BY differ?",
+      "keywords": ["group by", "order by", "aggregation", "sorting"],
+      "marks": 5
+    },
+    {
+      "id": "DB_B12",
+      "level": "Beginner",
+      "question": "What is a stored procedure?",
+      "keywords": ["stored procedure", "precompiled", "reusable", "security"],
+      "marks": 4
+    },
+    {
+      "id": "DB_T3",
+      "level": "Trap",
+      "question": "What is the difference between Stored Procedure (SP) and User Defined Function (UDF)?",
+      "keywords": ["stored procedure", "udf", "data modification", "return values"],
+      "marks": 5
+    },
+    {
+      "id": "DB_D24",
+      "level": "Depth",
+      "question": "What are triggers in SQL?",
+      "keywords": ["triggers", "after trigger", "instead of trigger", "automatic execution"],
+      "marks": 5
+    },
+    {
+      "id": "DB_D25",
+      "level": "Depth",
+      "question": "What are the types of triggers in SQL Server?",
+      "keywords": ["after trigger", "instead of trigger", "views", "constraints"],
+      "marks": 5
+    },
+    {
+      "id": "DB_D26",
+      "level": "Depth",
+      "question": "What is SQL Injection?",
+      "keywords": ["sql injection", "security", "input validation", "attack"],
+      "marks": 5
+    },
+    {
+      "id": "DB_S1",
+      "level": "Scenario",
+      "question": "How to create a table in SQL?",
+      "keywords": ["create table", "ddl", "datatype", "columns"],
+      "marks": 4
+    },
+    {
+      "id": "DB_S2",
+      "level": "Scenario",
+      "question": "How to update records in SQL?",
+      "keywords": ["update", "set", "where"],
+      "marks": 4
+    },
+    {
+      "id": "DB_S3",
+      "level": "Scenario",
+      "question": "How to delete records in SQL?",
+      "keywords": ["delete", "where", "remove rows"],
+      "marks": 4
+    },
+    {
+      "id": "DB_S4",
+      "level": "Scenario",
+      "question": "How to alter a table schema in SQL?",
+      "keywords": ["alter table", "add column", "modify column"],
+      "marks": 5
+    },
+    {
+      "id": "DB_S5",
+      "level": "Scenario",
+      "question": "Write SQL query to find the second highest salary.",
+      "keywords": ["second highest", "max", "subquery", "order by"],
+      "marks": 5
+    },
+    {
+      "id": "DB_S6",
+      "level": "Scenario",
+      "question": "Write SQL query to find maximum salary in each department.",
+      "keywords": ["group by", "max", "department", "join"],
+      "marks": 5
+    },
+    {
+      "id": "DB_S7",
+      "level": "Scenario",
+      "question": "How to select unique records from a table?",
+      "keywords": ["distinct", "unique records"],
+      "marks": 4
+    },
+    {
+      "id": "DB_S8",
+      "level": "Scenario",
+      "question": "How to fetch common records from two tables?",
+      "keywords": ["intersect", "common records"],
+      "marks": 4
+    },
+    {
+      "id": "DB_S9",
+      "level": "Scenario",
+      "question": "How to create an empty table from an existing table?",
+      "keywords": ["select into", "copy structure", "no rows"],
+      "marks": 4
+    },
+    {
+      "id": "DB_T4",
+      "level": "Trap",
+      "question": "You have a composite index and provide only partial columns in WHERE clause. Will the index be used?",
+      "keywords": ["composite index", "leftmost prefix", "query optimization"],
+      "marks": 5
+    }
+  ]
+}
