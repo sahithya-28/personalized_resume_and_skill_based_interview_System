@@ -1,0 +1,28 @@
+# Python
+venv/
+.venv/
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Build / generated
+frontend/node_modules/
+frontend/dist/
+generated_resumes/
+uploads/resumes/
+
+# Local runtime data
+backend/app.db
+
+# Editor / OS
+.vscode/
+.idea/
+.DS_Store
+# Resume files and sample data
+Resume.pdf
+uploads/
+data/resumes/
+uploads/*.pdf
+uploads/*.docx
+uploads/resumes/
+generated_resumes/

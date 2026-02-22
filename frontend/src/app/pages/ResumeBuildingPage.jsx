@@ -99,6 +99,8 @@ export default function ResumeBuildingPage() {
   const [modifyLoading, setModifyLoading] = useState(false);
   const [modifyReport, setModifyReport] = useState(null);
   const [modifyError, setModifyError] = useState('');
+  const [modifyInfo, setModifyInfo] = useState('');
+  const [modifyRaw, setModifyRaw] = useState(null);
 
   const categoryEntries = Object.entries(analysis?.category_scores || {});
   const statusLabel = analysis ? getStatusLabel(analysis.overall_score) : '';
@@ -143,8 +145,7 @@ export default function ResumeBuildingPage() {
     }
   };
 
-  const analyzeExistingResume = async (event) => {
-    event.preventDefault();
+  const analyzeExistingResume = async () => {
     if (!resumeFile) {
       setModifyError('Please upload a PDF or DOCX resume first.');
       return;
@@ -153,10 +154,23 @@ export default function ResumeBuildingPage() {
     try {
       setModifyLoading(true);
       setModifyError('');
+      setModifyInfo('Uploading and analyzing resume...');
+      setModifyReport(null);
+      setModifyRaw(null);
       const result = await analyzeResume(resumeFile);
-      setModifyReport(result);
+      setModifyRaw(result);
+      const normalized = {
+        overall_score: Number(result?.overall_score ?? result?.score ?? 0),
+        category_scores: result?.category_scores || {},
+        sections: result?.sections || {},
+        skills: Array.isArray(result?.skills) ? result.skills : [],
+        vulnerabilities: Array.isArray(result?.vulnerabilities) ? result.vulnerabilities : [],
+      };
+      setModifyReport(normalized);
+      setModifyInfo('ATS analysis completed.');
     } catch (err) {
       setModifyError(err.message || 'Failed to analyze resume for ATS score.');
+      setModifyInfo('');
     } finally {
       setModifyLoading(false);
     }
@@ -226,7 +240,7 @@ export default function ResumeBuildingPage() {
 
         {mode === 'modify' ? (
           <div className="space-y-6">
-            <form onSubmit={analyzeExistingResume} className="bg-white p-8 rounded-2xl shadow-xl space-y-4">
+            <div className="bg-white p-8 rounded-2xl shadow-xl space-y-4">
               <h2 className="text-2xl font-bold text-gray-900">Modify Existing Resume</h2>
               <label className="block border-2 border-dashed border-amber-300 rounded-xl p-8 text-center cursor-pointer hover:border-amber-500 transition-colors">
                 <div className="w-14 h-14 bg-amber-100 rounded-full flex items-center justify-center mx-auto mb-3">
@@ -238,18 +252,26 @@ export default function ResumeBuildingPage() {
                   type="file"
                   accept=".pdf,.docx"
                   className="hidden"
-                  onChange={(e) => setResumeFile(e.target.files?.[0] || null)}
+                  onChange={(e) => {
+                    setResumeFile(e.target.files?.[0] || null);
+                    setModifyError('');
+                    setModifyInfo('');
+                    setModifyReport(null);
+                    setModifyRaw(null);
+                  }}
                 />
               </label>
 
               {resumeFile ? <p className="text-sm text-gray-700">Selected: <span className="font-semibold">{resumeFile.name}</span></p> : null}
+              {modifyLoading ? <p className="text-sm text-amber-700">Analyzing resume and calculating ATS score...</p> : null}
+              {!modifyLoading && modifyInfo ? <p className="text-sm text-green-700">{modifyInfo}</p> : null}
               {modifyError ? <div className="bg-red-50 border border-red-200 text-red-700 rounded-lg px-4 py-3">{modifyError}</div> : null}
 
-              <button type="submit" disabled={modifyLoading} className="px-6 py-3 bg-amber-600 text-white rounded-xl hover:bg-amber-700 disabled:opacity-60 font-semibold inline-flex items-center gap-2">
+              <button type="button" onClick={analyzeExistingResume} disabled={modifyLoading} className="px-6 py-3 bg-amber-600 text-white rounded-xl hover:bg-amber-700 disabled:opacity-60 font-semibold inline-flex items-center gap-2">
                 {modifyLoading ? <Loader2 className="w-5 h-5 animate-spin" /> : null}
                 {modifyLoading ? 'Analyzing...' : 'Get ATS Score & Changes'}
               </button>
-            </form>
+            </div>
 
             {modifyReport ? (
               <div className="bg-white p-8 rounded-2xl shadow-xl">
@@ -295,6 +317,21 @@ export default function ResumeBuildingPage() {
                   Use Extracted Details in Create New
                 </button>
               </div>
+            ) : null}
+
+            {!modifyLoading && !modifyError && resumeFile && !modifyReport ? (
+              <div className="bg-white p-4 rounded-xl border border-gray-200 text-gray-600 text-sm">
+                ATS report will appear here after analysis completes.
+              </div>
+            ) : null}
+
+            {!modifyLoading && modifyRaw ? (
+              <details className="bg-white p-4 rounded-xl border border-gray-200">
+                <summary className="cursor-pointer font-semibold text-gray-800">Debug: Raw ATS API Response</summary>
+                <pre className="mt-3 text-xs text-gray-700 whitespace-pre-wrap break-words">
+                  {JSON.stringify(modifyRaw, null, 2)}
+                </pre>
+              </details>
             ) : null}
           </div>
         ) : null}
