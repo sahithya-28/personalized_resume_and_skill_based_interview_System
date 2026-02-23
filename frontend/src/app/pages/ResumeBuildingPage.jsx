@@ -53,6 +53,39 @@ const templateLabels = {
   student: 'Student',
 };
 
+const templatePreviewMeta = {
+  basic: {
+    subtitle: 'Balanced sections for most roles',
+    palette: 'from-slate-100 via-white to-slate-50',
+    accent: 'bg-slate-700',
+  },
+  modern: {
+    subtitle: 'Clean layout with modern hierarchy',
+    palette: 'from-cyan-100 via-white to-teal-50',
+    accent: 'bg-cyan-600',
+  },
+  professional: {
+    subtitle: 'Traditional structure for corporate roles',
+    palette: 'from-indigo-100 via-white to-blue-50',
+    accent: 'bg-indigo-700',
+  },
+  minimal: {
+    subtitle: 'Lightweight one-page style',
+    palette: 'from-gray-100 via-white to-zinc-50',
+    accent: 'bg-gray-700',
+  },
+  executive: {
+    subtitle: 'Leadership-focused detail-rich format',
+    palette: 'from-amber-100 via-white to-orange-50',
+    accent: 'bg-amber-700',
+  },
+  student: {
+    subtitle: 'Highlights academics and internships',
+    palette: 'from-emerald-100 via-white to-lime-50',
+    accent: 'bg-emerald-700',
+  },
+};
+
 function getStatusLabel(score) {
   if (score >= 80) return 'Strong';
   if (score >= 60) return 'Medium';
@@ -114,6 +147,10 @@ export default function ResumeBuildingPage() {
   const onChange = (event) => {
     const { name, value } = event.target;
     setForm((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const onTemplateSelect = (template) => {
+    setForm((prev) => ({ ...prev, template }));
   };
 
   const onSubmit = async (event) => {
@@ -377,18 +414,44 @@ export default function ResumeBuildingPage() {
               </div>
 
               <div>
-                <label htmlFor="template" className="block text-sm font-semibold text-gray-700 mb-2">
-                  Template
-                </label>
-                <select name="template" id="template" value={form.template} onChange={onChange} className="border rounded-lg px-3 py-2 w-full md:w-80">
-                  <option value="basic">Basic</option>
-                  <option value="modern">Modern</option>
-                  <option value="professional">Professional</option>
-                  <option value="minimal">Minimal</option>
-                  <option value="executive">Executive</option>
-                  <option value="student">Student</option>
-                </select>
-                <p className="text-xs text-gray-600 mt-2">Fields below are adjusted based on selected template.</p>
+                <h3 className="block text-sm font-semibold text-gray-700 mb-2">Choose Template</h3>
+                <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {Object.entries(templateLabels).map(([templateKey, label]) => {
+                    const meta = templatePreviewMeta[templateKey];
+                    const isSelected = form.template === templateKey;
+                    return (
+                      <button
+                        key={templateKey}
+                        type="button"
+                        onClick={() => onTemplateSelect(templateKey)}
+                        className={`text-left rounded-xl border transition-all p-3 ${
+                          isSelected
+                            ? 'border-teal-600 ring-2 ring-teal-200 shadow-md'
+                            : 'border-gray-200 hover:border-teal-300 hover:shadow-sm'
+                        }`}
+                      >
+                        <div className={`rounded-lg border border-gray-200 bg-gradient-to-br ${meta.palette} p-3 h-44`}>
+                          <div className={`h-2 w-24 rounded ${meta.accent} mb-3`} />
+                          <div className="space-y-2">
+                            <div className="h-2.5 w-full rounded bg-white/80" />
+                            <div className="h-2.5 w-11/12 rounded bg-white/80" />
+                            <div className="h-2.5 w-10/12 rounded bg-white/80" />
+                          </div>
+                          <div className="mt-4 grid grid-cols-2 gap-2">
+                            <div className="h-10 rounded bg-white/85" />
+                            <div className="h-10 rounded bg-white/85" />
+                          </div>
+                          <div className="mt-2 h-2.5 w-9/12 rounded bg-white/80" />
+                        </div>
+                        <div className="mt-3">
+                          <p className="font-semibold text-gray-900">{label}</p>
+                          <p className="text-xs text-gray-600">{meta.subtitle}</p>
+                        </div>
+                      </button>
+                    );
+                  })}
+                </div>
+                <p className="text-xs text-gray-600 mt-2">Selected template: <span className="font-semibold">{templateLabels[form.template]}</span></p>
               </div>
 
               {visibleFields.map((fieldName) => (
