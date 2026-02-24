@@ -1,6 +1,6 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Award, FileUp, Loader2, PlusCircle, RefreshCw } from 'lucide-react';
-import { analyzeResume, generateResume } from '../api/resumeApi';
+import { API_BASE_URL, analyzeResume, generateResume, getResumeTemplates } from '../api/resumeApi';
 
 const initialForm = {
   name: '',
@@ -24,67 +24,88 @@ const scoreColors = {
   experience: '#7c3aed',
 };
 
-const templateFieldConfig = {
-  basic: ['skills', 'projects', 'experience', 'education'],
-  modern: ['summary', 'skills', 'projects', 'experience', 'education'],
-  professional: ['summary', 'experience', 'projects', 'skills', 'education'],
-  minimal: ['summary', 'skills', 'experience', 'education'],
-  executive: ['summary', 'achievements', 'experience', 'projects', 'skills', 'certifications', 'education'],
-  student: ['summary', 'education', 'internships', 'projects', 'skills', 'certifications', 'achievements'],
-};
+const fallbackTemplates = [
+  {
+    id: 'basic',
+    name: 'Basic',
+    description: 'Balanced sections for most roles',
+    fields: [
+      { key: 'skills', label: 'Skills', placeholder: 'Python, FastAPI, React, SQL', required: true },
+      { key: 'projects', label: 'Projects', placeholder: 'Project name, your role, key impact', required: true },
+      { key: 'experience', label: 'Experience', placeholder: 'Company, role, duration, measurable outcomes', required: true },
+      { key: 'education', label: 'Education', placeholder: 'Degree, college, year range, GPA', required: true },
+    ],
+  },
+  {
+    id: 'modern',
+    name: 'Modern',
+    description: 'Clean layout with modern hierarchy',
+    fields: [
+      { key: 'summary', label: 'Professional Summary', placeholder: '2-4 lines overview of your profile and strengths', required: true },
+      { key: 'skills', label: 'Skills', placeholder: 'Python, FastAPI, React, SQL', required: true },
+      { key: 'projects', label: 'Projects', placeholder: 'Project name, your role, key impact', required: true },
+      { key: 'experience', label: 'Experience', placeholder: 'Company, role, duration, measurable outcomes', required: true },
+      { key: 'education', label: 'Education', placeholder: 'Degree, college, year range, GPA', required: true },
+    ],
+  },
+  {
+    id: 'professional',
+    name: 'Professional',
+    description: 'Traditional structure for corporate roles',
+    fields: [
+      { key: 'summary', label: 'Professional Summary', placeholder: '2-4 lines overview of your profile and strengths', required: true },
+      { key: 'experience', label: 'Experience', placeholder: 'Company, role, duration, measurable outcomes', required: true },
+      { key: 'projects', label: 'Projects', placeholder: 'Project name, your role, key impact', required: true },
+      { key: 'skills', label: 'Skills', placeholder: 'Python, FastAPI, React, SQL', required: true },
+      { key: 'education', label: 'Education', placeholder: 'Degree, college, year range, GPA', required: true },
+    ],
+  },
+  {
+    id: 'minimal',
+    name: 'Minimal',
+    description: 'Lightweight one-page style',
+    fields: [
+      { key: 'summary', label: 'Professional Summary', placeholder: '2-4 lines overview of your profile and strengths', required: true },
+      { key: 'skills', label: 'Skills', placeholder: 'Python, FastAPI, React, SQL', required: true },
+      { key: 'experience', label: 'Experience', placeholder: 'Company, role, duration, measurable outcomes', required: true },
+      { key: 'education', label: 'Education', placeholder: 'Degree, college, year range, GPA', required: true },
+    ],
+  },
+  {
+    id: 'executive',
+    name: 'Executive',
+    description: 'Leadership-focused detail-rich format',
+    fields: [
+      { key: 'summary', label: 'Professional Summary', placeholder: 'Leadership narrative and strategic strengths', required: true },
+      { key: 'achievements', label: 'Achievements', placeholder: 'Awards, recognitions, ranking, impact metrics', required: true },
+      { key: 'experience', label: 'Experience', placeholder: 'Company, role, duration, measurable outcomes', required: true },
+      { key: 'projects', label: 'Projects', placeholder: 'Major programs delivered, scope, KPIs', required: true },
+      { key: 'skills', label: 'Skills', placeholder: 'Leadership, program management, budgeting, analytics', required: true },
+      { key: 'certifications', label: 'Certifications', placeholder: 'PMP, Six Sigma, etc.', required: false },
+      { key: 'education', label: 'Education', placeholder: 'Degree, university, year range', required: true },
+    ],
+  },
+  {
+    id: 'student',
+    name: 'Student',
+    description: 'Highlights academics and internships',
+    fields: [
+      { key: 'summary', label: 'Career Objective', placeholder: 'Entry-level objective and interests', required: true },
+      { key: 'education', label: 'Education', placeholder: 'Degree, college, expected graduation, GPA', required: true },
+      { key: 'internships', label: 'Internships', placeholder: 'Company, role, tasks, outcomes', required: true },
+      { key: 'projects', label: 'Projects', placeholder: 'Academic/personal projects with outcomes', required: true },
+      { key: 'skills', label: 'Skills', placeholder: 'Languages, frameworks, tools', required: true },
+      { key: 'certifications', label: 'Certifications', placeholder: 'NPTEL, Coursera, AWS, etc.', required: false },
+      { key: 'achievements', label: 'Achievements', placeholder: 'Hackathons, competitions, scholarships', required: false },
+    ],
+  },
+];
 
-const fieldMeta = {
-  summary: { label: 'Professional Summary', placeholder: '2-4 lines overview of your profile and strengths' },
-  skills: { label: 'Skills', placeholder: 'Python, FastAPI, React, SQL' },
-  projects: { label: 'Projects', placeholder: 'Project name, your role, key impact' },
-  experience: { label: 'Experience', placeholder: 'Company, role, duration, measurable outcomes' },
-  education: { label: 'Education', placeholder: 'Degree, college, year range, GPA' },
-  certifications: { label: 'Certifications', placeholder: 'AWS CCP, Oracle Java, etc.' },
-  achievements: { label: 'Achievements', placeholder: 'Awards, recognitions, ranking, impact metrics' },
-  internships: { label: 'Internships', placeholder: 'Company, role, tasks, outcomes' },
-};
-
-const templateLabels = {
-  basic: 'Basic',
-  modern: 'Modern',
-  professional: 'Professional',
-  minimal: 'Minimal',
-  executive: 'Executive',
-  student: 'Student',
-};
-
-const templatePreviewMeta = {
-  basic: {
-    subtitle: 'Balanced sections for most roles',
-    palette: 'from-slate-100 via-white to-slate-50',
-    accent: 'bg-slate-700',
-  },
-  modern: {
-    subtitle: 'Clean layout with modern hierarchy',
-    palette: 'from-cyan-100 via-white to-teal-50',
-    accent: 'bg-cyan-600',
-  },
-  professional: {
-    subtitle: 'Traditional structure for corporate roles',
-    palette: 'from-indigo-100 via-white to-blue-50',
-    accent: 'bg-indigo-700',
-  },
-  minimal: {
-    subtitle: 'Lightweight one-page style',
-    palette: 'from-gray-100 via-white to-zinc-50',
-    accent: 'bg-gray-700',
-  },
-  executive: {
-    subtitle: 'Leadership-focused detail-rich format',
-    palette: 'from-amber-100 via-white to-orange-50',
-    accent: 'bg-amber-700',
-  },
-  student: {
-    subtitle: 'Highlights academics and internships',
-    palette: 'from-emerald-100 via-white to-lime-50',
-    accent: 'bg-emerald-700',
-  },
-};
+function resolvePreviewUrl(previewUrl) {
+  if (!previewUrl) return '';
+  if (previewUrl.startsWith('http://') || previewUrl.startsWith('https://')) return previewUrl;
+  return `${API_BASE_URL}${previewUrl}`;
+}
 
 function getStatusLabel(score) {
   if (score >= 80) return 'Strong';
@@ -127,6 +148,8 @@ export default function ResumeBuildingPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
+  const [templates, setTemplates] = useState(fallbackTemplates);
+  const [templateLoadError, setTemplateLoadError] = useState('');
 
   const [resumeFile, setResumeFile] = useState(null);
   const [modifyLoading, setModifyLoading] = useState(false);
@@ -142,7 +165,42 @@ export default function ResumeBuildingPage() {
   const modifyStatus = modifyReport ? getStatusLabel(modifyReport.overall_score) : '';
   const modifySuggestions = modifyReport ? buildChangeSuggestions(modifyReport) : [];
 
-  const visibleFields = templateFieldConfig[form.template] || templateFieldConfig.basic;
+  const selectedTemplate = templates.find((item) => item.id === form.template) || templates[0] || fallbackTemplates[0];
+  const visibleFields = selectedTemplate?.fields || [];
+
+  useEffect(() => {
+    let active = true;
+
+    const loadTemplates = async () => {
+      try {
+        const response = await getResumeTemplates();
+        const incomingTemplates = Array.isArray(response?.templates) ? response.templates : [];
+        const defaultTemplate = response?.default_template || 'basic';
+        if (!active || !incomingTemplates.length) return;
+
+        setTemplateLoadError('');
+        setTemplates(incomingTemplates);
+        const nextTemplate =
+          incomingTemplates.some((item) => item.id === defaultTemplate)
+            ? defaultTemplate
+            : incomingTemplates[0].id;
+        setForm((prev) => ({
+          ...prev,
+          template: incomingTemplates.some((item) => item.id === prev.template)
+            ? prev.template
+            : nextTemplate,
+        }));
+      } catch {
+        if (!active) return;
+        setTemplateLoadError('Template catalog unavailable. Using local template configuration.');
+      }
+    };
+
+    loadTemplates();
+    return () => {
+      active = false;
+    };
+  }, []);
 
   const onChange = (event) => {
     const { name, value } = event.target;
@@ -161,6 +219,14 @@ export default function ResumeBuildingPage() {
       return;
     }
 
+    const missingTemplateField = visibleFields.find(
+      (field) => field?.required && !String(form[field.key] || '').trim(),
+    );
+    if (missingTemplateField) {
+      setError(`${missingTemplateField.label || missingTemplateField.key} is required for the selected template.`);
+      return;
+    }
+
     try {
       setLoading(true);
       setError('');
@@ -174,7 +240,7 @@ export default function ResumeBuildingPage() {
       link.click();
       URL.revokeObjectURL(url);
 
-      setSuccess(`Resume generated and downloaded successfully using ${templateLabels[form.template]} template.`);
+      setSuccess(`Resume generated and downloaded successfully using ${selectedTemplate?.name || 'selected'} template.`);
     } catch (err) {
       setError(err.message || 'Failed to generate resume.');
     } finally {
@@ -416,55 +482,56 @@ export default function ResumeBuildingPage() {
               <div>
                 <h3 className="block text-sm font-semibold text-gray-700 mb-2">Choose Template</h3>
                 <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                  {Object.entries(templateLabels).map(([templateKey, label]) => {
-                    const meta = templatePreviewMeta[templateKey];
-                    const isSelected = form.template === templateKey;
+                  {templates.map((template) => {
+                    const isSelected = form.template === template.id;
+                    const previewUrl = resolvePreviewUrl(template.preview_url);
                     return (
                       <button
-                        key={templateKey}
+                        key={template.id}
                         type="button"
-                        onClick={() => onTemplateSelect(templateKey)}
+                        onClick={() => onTemplateSelect(template.id)}
                         className={`text-left rounded-xl border transition-all p-3 ${
                           isSelected
                             ? 'border-teal-600 ring-2 ring-teal-200 shadow-md'
                             : 'border-gray-200 hover:border-teal-300 hover:shadow-sm'
                         }`}
                       >
-                        <div className={`rounded-lg border border-gray-200 bg-gradient-to-br ${meta.palette} p-3 h-44`}>
-                          <div className={`h-2 w-24 rounded ${meta.accent} mb-3`} />
-                          <div className="space-y-2">
-                            <div className="h-2.5 w-full rounded bg-white/80" />
-                            <div className="h-2.5 w-11/12 rounded bg-white/80" />
-                            <div className="h-2.5 w-10/12 rounded bg-white/80" />
-                          </div>
-                          <div className="mt-4 grid grid-cols-2 gap-2">
-                            <div className="h-10 rounded bg-white/85" />
-                            <div className="h-10 rounded bg-white/85" />
-                          </div>
-                          <div className="mt-2 h-2.5 w-9/12 rounded bg-white/80" />
+                        <div className="rounded-lg border border-gray-200 bg-gray-100 h-44 overflow-hidden">
+                          {previewUrl ? (
+                            <img
+                              src={previewUrl}
+                              alt={`${template.name} sample resume`}
+                              className="w-full h-full object-cover"
+                              loading="lazy"
+                            />
+                          ) : (
+                            <div className="w-full h-full bg-gradient-to-br from-slate-100 via-white to-slate-50" />
+                          )}
                         </div>
                         <div className="mt-3">
-                          <p className="font-semibold text-gray-900">{label}</p>
-                          <p className="text-xs text-gray-600">{meta.subtitle}</p>
+                          <p className="font-semibold text-gray-900">{template.name}</p>
+                          <p className="text-xs text-gray-600">{template.description}</p>
                         </div>
                       </button>
                     );
                   })}
                 </div>
-                <p className="text-xs text-gray-600 mt-2">Selected template: <span className="font-semibold">{templateLabels[form.template]}</span></p>
+                {templateLoadError ? <p className="text-xs text-amber-700 mt-2">{templateLoadError}</p> : null}
+                <p className="text-xs text-gray-600 mt-2">Selected template: <span className="font-semibold">{selectedTemplate?.name}</span></p>
               </div>
 
-              {visibleFields.map((fieldName) => (
-                <div key={fieldName}>
-                  <label htmlFor={fieldName} className="block text-sm font-semibold text-gray-700 mb-2">
-                    {fieldMeta[fieldName].label}
+              {visibleFields.map((field) => (
+                <div key={field.key}>
+                  <label htmlFor={field.key} className="block text-sm font-semibold text-gray-700 mb-2">
+                    {field.label}
+                    {field.required ? <span className="text-red-600"> *</span> : null}
                   </label>
                   <textarea
-                    id={fieldName}
-                    name={fieldName}
-                    value={form[fieldName]}
+                    id={field.key}
+                    name={field.key}
+                    value={form[field.key]}
                     onChange={onChange}
-                    placeholder={fieldMeta[fieldName].placeholder}
+                    placeholder={field.placeholder || ''}
                     className="border rounded-lg px-3 py-2 w-full min-h-24"
                   />
                 </div>

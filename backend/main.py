@@ -8,6 +8,7 @@ from pathlib import Path
 from fastapi import FastAPI, File, HTTPException, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
+from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
 
 from auth_store import authenticate_user, create_user, init_auth_db
@@ -15,6 +16,9 @@ from resume_generator import generate_resume_pdf
 from resume_scorer import analyze_resume_text, extract_text_from_file
 
 app = FastAPI(title="Smart Interview Backend", version="1.1.0")
+
+ROOT_DIR = Path(__file__).resolve().parent.parent
+STATIC_DIR = Path(__file__).resolve().parent / "static"
 
 app.add_middleware(
     CORSMiddleware,
@@ -25,6 +29,7 @@ app.add_middleware(
 )
 
 init_auth_db()
+app.mount("/static", StaticFiles(directory=str(STATIC_DIR)), name="static")
 
 
 class ResumeGenerateRequest(BaseModel):
@@ -65,6 +70,90 @@ class SkillAnswerScoreRequest(BaseModel):
     skill: str = Field(min_length=1)
     question_id: str = Field(min_length=1)
     answer: str = ""
+
+
+RESUME_TEMPLATE_CATALOG: list[dict] = [
+    {
+        "id": "basic",
+        "name": "Basic",
+        "description": "Balanced sections for most roles",
+        "preview_url": "/static/resume_previews/basic.svg",
+        "fields": [
+            {"key": "skills", "label": "Skills", "placeholder": "Python, FastAPI, React, SQL", "required": True},
+            {"key": "projects", "label": "Projects", "placeholder": "Project name, your role, key impact", "required": True},
+            {"key": "experience", "label": "Experience", "placeholder": "Company, role, duration, measurable outcomes", "required": True},
+            {"key": "education", "label": "Education", "placeholder": "Degree, college, year range, GPA", "required": True},
+        ],
+    },
+    {
+        "id": "modern",
+        "name": "Modern",
+        "description": "Clean layout with modern hierarchy",
+        "preview_url": "/static/resume_previews/modern.svg",
+        "fields": [
+            {"key": "summary", "label": "Professional Summary", "placeholder": "2-4 lines overview of your profile and strengths", "required": True},
+            {"key": "skills", "label": "Skills", "placeholder": "Python, FastAPI, React, SQL", "required": True},
+            {"key": "projects", "label": "Projects", "placeholder": "Project name, your role, key impact", "required": True},
+            {"key": "experience", "label": "Experience", "placeholder": "Company, role, duration, measurable outcomes", "required": True},
+            {"key": "education", "label": "Education", "placeholder": "Degree, college, year range, GPA", "required": True},
+        ],
+    },
+    {
+        "id": "professional",
+        "name": "Professional",
+        "description": "Traditional structure for corporate roles",
+        "preview_url": "/static/resume_previews/professional.svg",
+        "fields": [
+            {"key": "summary", "label": "Professional Summary", "placeholder": "2-4 lines overview of your profile and strengths", "required": True},
+            {"key": "experience", "label": "Experience", "placeholder": "Company, role, duration, measurable outcomes", "required": True},
+            {"key": "projects", "label": "Projects", "placeholder": "Project name, your role, key impact", "required": True},
+            {"key": "skills", "label": "Skills", "placeholder": "Python, FastAPI, React, SQL", "required": True},
+            {"key": "education", "label": "Education", "placeholder": "Degree, college, year range, GPA", "required": True},
+        ],
+    },
+    {
+        "id": "minimal",
+        "name": "Minimal",
+        "description": "Lightweight one-page style",
+        "preview_url": "/static/resume_previews/minimal.svg",
+        "fields": [
+            {"key": "summary", "label": "Professional Summary", "placeholder": "2-4 lines overview of your profile and strengths", "required": True},
+            {"key": "skills", "label": "Skills", "placeholder": "Python, FastAPI, React, SQL", "required": True},
+            {"key": "experience", "label": "Experience", "placeholder": "Company, role, duration, measurable outcomes", "required": True},
+            {"key": "education", "label": "Education", "placeholder": "Degree, college, year range, GPA", "required": True},
+        ],
+    },
+    {
+        "id": "executive",
+        "name": "Executive",
+        "description": "Leadership-focused detail-rich format",
+        "preview_url": "/static/resume_previews/executive.svg",
+        "fields": [
+            {"key": "summary", "label": "Professional Summary", "placeholder": "Leadership narrative and strategic strengths", "required": True},
+            {"key": "achievements", "label": "Achievements", "placeholder": "Awards, recognitions, ranking, impact metrics", "required": True},
+            {"key": "experience", "label": "Experience", "placeholder": "Company, role, duration, measurable outcomes", "required": True},
+            {"key": "projects", "label": "Projects", "placeholder": "Major programs delivered, scope, KPIs", "required": True},
+            {"key": "skills", "label": "Skills", "placeholder": "Leadership, program management, budgeting, analytics", "required": True},
+            {"key": "certifications", "label": "Certifications", "placeholder": "PMP, Six Sigma, etc.", "required": False},
+            {"key": "education", "label": "Education", "placeholder": "Degree, university, year range", "required": True},
+        ],
+    },
+    {
+        "id": "student",
+        "name": "Student",
+        "description": "Highlights academics and internships",
+        "preview_url": "/static/resume_previews/student.svg",
+        "fields": [
+            {"key": "summary", "label": "Career Objective", "placeholder": "Entry-level objective and interests", "required": True},
+            {"key": "education", "label": "Education", "placeholder": "Degree, college, expected graduation, GPA", "required": True},
+            {"key": "internships", "label": "Internships", "placeholder": "Company, role, tasks, outcomes", "required": True},
+            {"key": "projects", "label": "Projects", "placeholder": "Academic/personal projects with outcomes", "required": True},
+            {"key": "skills", "label": "Skills", "placeholder": "Languages, frameworks, tools", "required": True},
+            {"key": "certifications", "label": "Certifications", "placeholder": "NPTEL, Coursera, AWS, etc.", "required": False},
+            {"key": "achievements", "label": "Achievements", "placeholder": "Hackathons, competitions, scholarships", "required": False},
+        ],
+    },
+]
 
 
 def _validate_email(value: str) -> str:
@@ -176,9 +265,26 @@ def _score_answer_with_keywords(answer: str, keywords: list[str], marks: float) 
     }
 
 
+def _template_map() -> dict[str, dict]:
+    return {item["id"]: item for item in RESUME_TEMPLATE_CATALOG if item.get("id")}
+
+
 @app.get("/health")
 def health() -> dict:
     return {"status": "ok"}
+
+
+@app.get("/resume-templates")
+def list_resume_templates() -> dict:
+    return {
+        "default_template": "basic",
+        "core_fields": [
+            {"key": "name", "label": "Name", "required": True, "type": "text"},
+            {"key": "email", "label": "Email", "required": True, "type": "email"},
+            {"key": "phone", "label": "Phone", "required": True, "type": "text"},
+        ],
+        "templates": RESUME_TEMPLATE_CATALOG,
+    }
 
 
 @app.post("/auth/register")
@@ -201,6 +307,19 @@ def login(payload: LoginRequest):
 
 @app.post("/generate-resume")
 def generate_resume(payload: ResumeGenerateRequest):
+    template = _template_map().get(payload.template)
+    if not template:
+        raise HTTPException(status_code=400, detail=f"Unsupported template: {payload.template}")
+
+    for field in template.get("fields", []):
+        if not field.get("required"):
+            continue
+        key = str(field.get("key", "")).strip()
+        label = str(field.get("label") or key).strip()
+        value = str(getattr(payload, key, "") or "").strip()
+        if not value:
+            raise HTTPException(status_code=400, detail=f"Missing required field for {template['name']}: {label}")
+
     try:
         output_path = generate_resume_pdf(payload.model_dump(), payload.template)
     except Exception as exc:

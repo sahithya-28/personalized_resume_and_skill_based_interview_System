@@ -1,4 +1,4 @@
-﻿const API_BASE_URL = 'http://localhost:8000';
+﻿export const API_BASE_URL = 'http://localhost:8000';
 
 async function parseError(response) {
   let detail = `Request failed with status ${response.status}`;
@@ -48,6 +48,16 @@ export async function generateResume(payload) {
   const filename = match?.[1] || 'generated_resume.pdf';
 
   return { blob, filename };
+}
+
+export async function getResumeTemplates() {
+  const response = await fetch(`${API_BASE_URL}/resume-templates`);
+
+  if (!response.ok) {
+    await parseError(response);
+  }
+
+  return response.json();
 }
 
 export async function getMatchedSkills(skills) {
