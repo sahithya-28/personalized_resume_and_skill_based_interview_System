@@ -51,13 +51,24 @@ export async function generateResume(payload) {
 }
 
 export async function getResumeTemplates() {
-  const response = await fetch(`${API_BASE_URL}/resume-templates`);
+  const candidates = ['/resume-templates', '/api/resume-templates'];
+  let lastError = null;
 
-  if (!response.ok) {
-    await parseError(response);
+  for (const path of candidates) {
+    const response = await fetch(`${API_BASE_URL}${path}`);
+
+    if (response.ok) {
+      return response.json();
+    }
+
+    if (response.status !== 404) {
+      await parseError(response);
+    }
+
+    lastError = new Error(`Resume template endpoint not found at ${path}`);
   }
 
-  return response.json();
+  throw lastError || new Error('Resume template endpoint not available');
 }
 
 export async function getMatchedSkills(skills) {

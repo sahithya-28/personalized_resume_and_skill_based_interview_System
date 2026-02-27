@@ -1,6 +1,6 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import { Award, FileUp, Loader2, PlusCircle, RefreshCw } from 'lucide-react';
-import { API_BASE_URL, analyzeResume, generateResume, getResumeTemplates } from '../api/resumeApi';
+import { API_BASE_URL, analyzeResume, generateResume } from '../api/resumeApi';
 
 const initialForm = {
   name: '',
@@ -29,6 +29,7 @@ const fallbackTemplates = [
     id: 'basic',
     name: 'Basic',
     description: 'Balanced sections for most roles',
+    preview_url: '/static/resume_previews/basic.svg',
     fields: [
       { key: 'skills', label: 'Skills', placeholder: 'Python, FastAPI, React, SQL', required: true },
       { key: 'projects', label: 'Projects', placeholder: 'Project name, your role, key impact', required: true },
@@ -40,6 +41,7 @@ const fallbackTemplates = [
     id: 'modern',
     name: 'Modern',
     description: 'Clean layout with modern hierarchy',
+    preview_url: '/static/resume_previews/modern.svg',
     fields: [
       { key: 'summary', label: 'Professional Summary', placeholder: '2-4 lines overview of your profile and strengths', required: true },
       { key: 'skills', label: 'Skills', placeholder: 'Python, FastAPI, React, SQL', required: true },
@@ -52,6 +54,7 @@ const fallbackTemplates = [
     id: 'professional',
     name: 'Professional',
     description: 'Traditional structure for corporate roles',
+    preview_url: '/static/resume_previews/professional.svg',
     fields: [
       { key: 'summary', label: 'Professional Summary', placeholder: '2-4 lines overview of your profile and strengths', required: true },
       { key: 'experience', label: 'Experience', placeholder: 'Company, role, duration, measurable outcomes', required: true },
@@ -64,6 +67,7 @@ const fallbackTemplates = [
     id: 'minimal',
     name: 'Minimal',
     description: 'Lightweight one-page style',
+    preview_url: '/static/resume_previews/minimal.svg',
     fields: [
       { key: 'summary', label: 'Professional Summary', placeholder: '2-4 lines overview of your profile and strengths', required: true },
       { key: 'skills', label: 'Skills', placeholder: 'Python, FastAPI, React, SQL', required: true },
@@ -75,6 +79,7 @@ const fallbackTemplates = [
     id: 'executive',
     name: 'Executive',
     description: 'Leadership-focused detail-rich format',
+    preview_url: '/static/resume_previews/executive.svg',
     fields: [
       { key: 'summary', label: 'Professional Summary', placeholder: 'Leadership narrative and strategic strengths', required: true },
       { key: 'achievements', label: 'Achievements', placeholder: 'Awards, recognitions, ranking, impact metrics', required: true },
@@ -89,6 +94,7 @@ const fallbackTemplates = [
     id: 'student',
     name: 'Student',
     description: 'Highlights academics and internships',
+    preview_url: '/static/resume_previews/student.svg',
     fields: [
       { key: 'summary', label: 'Career Objective', placeholder: 'Entry-level objective and interests', required: true },
       { key: 'education', label: 'Education', placeholder: 'Degree, college, expected graduation, GPA', required: true },
@@ -101,8 +107,198 @@ const fallbackTemplates = [
   },
 ];
 
-function resolvePreviewUrl(previewUrl) {
-  if (!previewUrl) return '';
+const templateSampleText = {
+  basic: {
+    name: 'Rahul Sharma',
+    role: 'Software Engineer',
+    contact: 'rahul.sharma@email.com | +91 98XXXXXX10 | github.com/rahul-sharma',
+    summary: [
+      'Results-driven engineer with 3+ years of experience building scalable web applications.',
+      'Strong in backend APIs, frontend integration, and performance optimization.',
+    ],
+    skills: ['Python', 'FastAPI', 'React', 'PostgreSQL', 'REST APIs', 'Git', 'Docker'],
+    experience: [
+      {
+        title: 'Software Engineer',
+        company: 'TechNova Solutions',
+        duration: 'Jun 2022 - Present',
+        bullets: [
+          'Developed reporting dashboard that reduced manual effort by 40%.',
+          'Built REST APIs consumed by 5+ internal product teams.',
+        ],
+      },
+      {
+        title: 'Associate Developer',
+        company: 'ByteGrid Labs',
+        duration: 'Jan 2021 - May 2022',
+        bullets: [
+          'Improved query performance and reduced API latency by 28%.',
+          'Automated release checks and reduced rollback incidents by 20%.',
+        ],
+      },
+    ],
+    projects: [
+      {
+        name: 'Interview Prep Platform',
+        stack: 'React, FastAPI, PostgreSQL',
+        bullets: ['Built mock interview workflows and analytics dashboard.', 'Enabled progress tracking for 2000+ monthly users.'],
+      },
+      {
+        name: 'Resume Analyzer',
+        stack: 'Python, NLP',
+        bullets: ['Created ATS scoring engine with section-wise suggestions.'],
+      },
+    ],
+    education: ['B.Tech in Computer Science - SRM Institute (2017 - 2021)', 'CGPA: 8.6/10'],
+    certifications: ['AWS Cloud Practitioner', 'Google Data Analytics'],
+  },
+  modern: {
+    name: 'Aisha Khan',
+    role: 'Full Stack Developer',
+    contact: 'aisha.khan@email.com | +91 97XXXXXX04 | linkedin.com/in/aisha-khan',
+    summary: ['Full stack developer focused on clean architecture and user-centric interfaces.'],
+    skills: ['TypeScript', 'Node.js', 'React', 'MongoDB', 'Redis', 'Docker', 'CI/CD'],
+    experience: [{ title: 'Full Stack Developer', company: 'Nimbus Apps', duration: 'Mar 2022 - Present', bullets: ['Built reusable UI library and reduced defects by 30%.', 'Improved API response times by 35% using caching.'] }],
+    projects: [{ name: 'E-commerce Admin Suite', stack: 'React, Node.js', bullets: ['Implemented inventory, orders, and role-based controls.'] }],
+    education: ['B.E. Information Technology - Anna University (2016 - 2020)'],
+    certifications: ['Meta Front-End Developer'],
+  },
+  professional: {
+    name: 'Vikram Patel',
+    role: 'Senior Business Analyst',
+    contact: 'vikram.patel@email.com | +91 96XXXXXX88 | linkedin.com/in/vikram-patel',
+    summary: ['Business analyst with 7+ years in process optimization and KPI strategy.'],
+    skills: ['SQL', 'Power BI', 'Excel', 'Stakeholder Management', 'BRD/FRD', 'Agile'],
+    experience: [{ title: 'Senior Business Analyst', company: 'FinEdge Consulting', duration: 'Apr 2021 - Present', bullets: ['Led requirements workshops for 4 enterprise programs.', 'Designed executive dashboards for sales and operations.'] }],
+    projects: [{ name: 'Revenue Forecasting Program', stack: 'Power BI, SQL', bullets: ['Improved forecast accuracy by 18% through data modeling.'] }],
+    education: ['MBA - Operations, NMIMS University (2014 - 2016)'],
+    certifications: ['CBAP'],
+  },
+  minimal: {
+    name: 'Neha Gupta',
+    role: 'Frontend Developer',
+    contact: 'neha.gupta@email.com | +91 93XXXXXX76 | github.com/nehagupta',
+    summary: ['Frontend engineer focused on responsive UI and accessibility.'],
+    skills: ['React', 'Tailwind CSS', 'JavaScript', 'Accessibility', 'Figma'],
+    experience: [{ title: 'Frontend Developer', company: 'SparkWave', duration: 'Aug 2021 - Present', bullets: ['Improved Lighthouse score from 62 to 91.', 'Built internal design system for 3 product teams.'] }],
+    projects: [{ name: 'Design System Kit', stack: 'React, Storybook', bullets: ['Created reusable components and docs.'] }],
+    education: ['B.Sc. Computer Science - Delhi University (2017 - 2020)'],
+    certifications: ['Google UX Design'],
+  },
+  executive: {
+    name: 'Sandeep Rao',
+    role: 'Engineering Manager',
+    contact: 'sandeep.rao@email.com | +91 99XXXXXX42 | linkedin.com/in/sandeeprao',
+    summary: ['Engineering leader with 10+ years of experience scaling teams and reliability.'],
+    skills: ['Leadership', 'Program Management', 'Cloud Architecture', 'SRE', 'Budgeting'],
+    experience: [{ title: 'Engineering Manager', company: 'CloudFleet Technologies', duration: 'Jan 2020 - Present', bullets: ['Managed 18-member engineering team.', 'Reduced production incidents by 35%.'] }],
+    projects: [{ name: 'Platform Reliability Program', stack: 'AWS, Kubernetes', bullets: ['Improved uptime SLA from 99.3% to 99.9%.'] }],
+    education: ['B.Tech - Computer Engineering, VIT University (2011 - 2015)'],
+    certifications: ['PMP', 'AWS Solutions Architect'],
+  },
+  student: {
+    name: 'Priya Reddy',
+    role: 'Computer Science Student',
+    contact: 'priya.reddy@email.com | +91 90XXXXXX17 | github.com/priyareddy',
+    summary: ['Final-year student with internship and project experience in web development and ML.'],
+    skills: ['Python', 'C++', 'HTML/CSS', 'React', 'DSA', 'GitHub'],
+    experience: [{ title: 'Software Intern', company: 'EduTech Labs', duration: 'May 2024 - Jul 2024', bullets: ['Built ERP admin modules used by faculty teams.', 'Improved attendance reporting performance by 25%.'] }],
+    projects: [{ name: 'Student Performance Predictor', stack: 'Python, scikit-learn', bullets: ['Built model with 82% accuracy on validation data.'] }],
+    education: ['B.Tech in CSE - JNTU Hyderabad (2021 - 2025)', 'CGPA: 8.8/10'],
+    certifications: ['NPTEL Python for Data Science'],
+  },
+};
+
+function escapeForSvg(value) {
+  return String(value || '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&apos;');
+}
+
+function buildFallbackPreviewDataUri(templateId, templateName) {
+  const sample = templateSampleText[templateId] || templateSampleText.basic;
+  const safeTemplateName = String(templateName || 'Resume');
+  let y = 84;
+  const lines = [];
+  const push = (text, options = {}) => {
+    const x = options.x ?? 110;
+    const size = options.size ?? 12;
+    const weight = options.weight ?? 400;
+    const fill = options.fill ?? '#1f2937';
+    const anchor = options.anchor ?? 'start';
+    lines.push(
+      `<text x="${x}" y="${y}" text-anchor="${anchor}" font-family="Arial, sans-serif" font-size="${size}" font-weight="${weight}" fill="${fill}">${escapeForSvg(text)}</text>`
+    );
+    y += options.step ?? 19;
+  };
+  const hr = () => {
+    lines.push(`<line x1="110" y1="${y}" x2="790" y2="${y}" stroke="#9ca3af" stroke-width="1"/>`);
+    y += 18;
+  };
+  const section = (title) => {
+    push(title, { size: 15, weight: 700, fill: '#111827', step: 18 });
+    hr();
+  };
+
+  push(sample.name || `${safeTemplateName} Candidate`, { x: 450, size: 34, weight: 700, fill: '#111827', anchor: 'middle', step: 24 });
+  push(sample.role || `${safeTemplateName} Sample`, { x: 450, size: 16, fill: '#374151', anchor: 'middle', step: 16 });
+  push(sample.contact || 'email@example.com | +00 0000000000 | linkedin.com/in/profile', { x: 450, size: 11, fill: '#4b5563', anchor: 'middle', step: 15 });
+  hr();
+
+  section('PROFESSIONAL SUMMARY');
+  (sample.summary || []).slice(0, 3).forEach((line) => push(line, { size: 12 }));
+  y += 4;
+  hr();
+
+  section('SKILLS');
+  push((sample.skills || []).join(' | '), { size: 12 });
+  y += 4;
+  hr();
+
+  section('EXPERIENCE');
+  (sample.experience || []).slice(0, 2).forEach((job) => {
+    push(`${job.title} | ${job.company}`, { size: 12, weight: 700, fill: '#111827', step: 16 });
+    push(job.duration, { size: 11, fill: '#4b5563', step: 16 });
+    (job.bullets || []).slice(0, 2).forEach((bullet) => push(`- ${bullet}`, { x: 118, size: 11, step: 15 }));
+    y += 4;
+  });
+  hr();
+
+  section('PROJECTS');
+  (sample.projects || []).slice(0, 2).forEach((project) => {
+    push(`${project.name} (${project.stack})`, { size: 12, weight: 700, fill: '#111827', step: 16 });
+    (project.bullets || []).slice(0, 2).forEach((bullet) => push(`- ${bullet}`, { x: 118, size: 11, step: 15 }));
+    y += 4;
+  });
+  hr();
+
+  section('EDUCATION');
+  (sample.education || []).slice(0, 2).forEach((line) => push(line, { size: 12, step: 17 }));
+  y += 2;
+
+  if ((sample.certifications || []).length) {
+    hr();
+    section('CERTIFICATIONS');
+    push((sample.certifications || []).join(' | '), { size: 12 });
+  }
+
+  const svg = `
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="1200" viewBox="0 0 900 1200">
+  <rect width="900" height="1200" fill="#eef2f7"/>
+  <rect x="80" y="40" width="740" height="1120" rx="3" fill="#ffffff" stroke="#111827"/>
+  ${lines.join('\n  ')}
+</svg>`;
+  return `data:image/svg+xml;utf8,${encodeURIComponent(svg)}`;
+}
+
+function resolvePreviewUrl(previewUrl, templateName, templateId) {
+  // Use inline preview for local static paths to avoid backend /static dependency and 404 noise.
+  if (!previewUrl || previewUrl.startsWith('/static/resume_previews/')) {
+    return buildFallbackPreviewDataUri(templateId, templateName);
+  }
   if (previewUrl.startsWith('http://') || previewUrl.startsWith('https://')) return previewUrl;
   return `${API_BASE_URL}${previewUrl}`;
 }
@@ -148,8 +344,7 @@ export default function ResumeBuildingPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
-  const [templates, setTemplates] = useState(fallbackTemplates);
-  const [templateLoadError, setTemplateLoadError] = useState('');
+  const [templates] = useState(fallbackTemplates);
 
   const [resumeFile, setResumeFile] = useState(null);
   const [modifyLoading, setModifyLoading] = useState(false);
@@ -167,40 +362,6 @@ export default function ResumeBuildingPage() {
 
   const selectedTemplate = templates.find((item) => item.id === form.template) || templates[0] || fallbackTemplates[0];
   const visibleFields = selectedTemplate?.fields || [];
-
-  useEffect(() => {
-    let active = true;
-
-    const loadTemplates = async () => {
-      try {
-        const response = await getResumeTemplates();
-        const incomingTemplates = Array.isArray(response?.templates) ? response.templates : [];
-        const defaultTemplate = response?.default_template || 'basic';
-        if (!active || !incomingTemplates.length) return;
-
-        setTemplateLoadError('');
-        setTemplates(incomingTemplates);
-        const nextTemplate =
-          incomingTemplates.some((item) => item.id === defaultTemplate)
-            ? defaultTemplate
-            : incomingTemplates[0].id;
-        setForm((prev) => ({
-          ...prev,
-          template: incomingTemplates.some((item) => item.id === prev.template)
-            ? prev.template
-            : nextTemplate,
-        }));
-      } catch {
-        if (!active) return;
-        setTemplateLoadError('Template catalog unavailable. Using local template configuration.');
-      }
-    };
-
-    loadTemplates();
-    return () => {
-      active = false;
-    };
-  }, []);
 
   const onChange = (event) => {
     const { name, value } = event.target;
@@ -484,7 +645,7 @@ export default function ResumeBuildingPage() {
                 <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
                   {templates.map((template) => {
                     const isSelected = form.template === template.id;
-                    const previewUrl = resolvePreviewUrl(template.preview_url);
+                    const previewUrl = resolvePreviewUrl(template.preview_url, template.name, template.id);
                     return (
                       <button
                         key={template.id}
@@ -503,6 +664,10 @@ export default function ResumeBuildingPage() {
                               alt={`${template.name} sample resume`}
                               className="w-full h-full object-cover"
                               loading="lazy"
+                              onError={(event) => {
+                                event.currentTarget.onerror = null;
+                                event.currentTarget.src = buildFallbackPreviewDataUri(template.id, template.name);
+                              }}
                             />
                           ) : (
                             <div className="w-full h-full bg-gradient-to-br from-slate-100 via-white to-slate-50" />
@@ -516,8 +681,21 @@ export default function ResumeBuildingPage() {
                     );
                   })}
                 </div>
-                {templateLoadError ? <p className="text-xs text-amber-700 mt-2">{templateLoadError}</p> : null}
                 <p className="text-xs text-gray-600 mt-2">Selected template: <span className="font-semibold">{selectedTemplate?.name}</span></p>
+                {resolvePreviewUrl(selectedTemplate?.preview_url, selectedTemplate?.name, selectedTemplate?.id) ? (
+                  <div className="mt-3 rounded-xl border border-teal-200 bg-teal-50 p-3">
+                    <p className="text-sm font-semibold text-teal-800 mb-2">Selected Template Preview</p>
+                    <img
+                      src={resolvePreviewUrl(selectedTemplate?.preview_url, selectedTemplate?.name, selectedTemplate?.id)}
+                      alt={`${selectedTemplate?.name || 'Selected'} resume preview`}
+                      className="w-full max-w-2xl h-auto rounded-lg border border-teal-100 bg-white"
+                      onError={(event) => {
+                        event.currentTarget.onerror = null;
+                        event.currentTarget.src = buildFallbackPreviewDataUri(selectedTemplate?.id, selectedTemplate?.name);
+                      }}
+                    />
+                  </div>
+                ) : null}
               </div>
 
               {visibleFields.map((field) => (
