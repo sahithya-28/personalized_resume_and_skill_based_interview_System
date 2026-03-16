@@ -1,4 +1,5 @@
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { useEffect } from 'react';
+import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 import Navigation from './components/Navigation';
 import HomePage from './pages/HomePage';
 import RegisterPage from './pages/RegisterPage';
@@ -17,10 +18,21 @@ import ResumeBuildingPage from './pages/ResumeBuildingPage';
 import AboutPage from './pages/AboutPage';
 import ContactPage from './pages/ContactPage';
 
+function ScrollToTopOnRouteChange() {
+  const { pathname } = useLocation();
+
+  useEffect(() => {
+    window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
+  }, [pathname]);
+
+  return null;
+}
+
 export default function App() {
   return (
     <Router>
       <div className="min-h-screen bg-white">
+        <ScrollToTopOnRouteChange />
         <Navigation />
         <Routes>
           <Route path="/" element={<HomePage />} />

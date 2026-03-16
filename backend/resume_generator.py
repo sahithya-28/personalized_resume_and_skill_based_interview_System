@@ -10,13 +10,14 @@ if str(ROOT_DIR) not in sys.path:
     sys.path.append(str(ROOT_DIR))
 
 from resume_templates.basic import build_basic_resume
+from resume_templates.creator import build_creator_resume
 from resume_templates.executive import build_executive_resume
 from resume_templates.minimal import build_minimal_resume
 from resume_templates.modern import build_modern_resume
 from resume_templates.professional import build_professional_resume
 from resume_templates.student import build_student_resume
 
-TemplateName = Literal["basic", "modern", "professional", "minimal", "executive", "student"]
+TemplateName = Literal["basic", "modern", "professional", "minimal", "executive", "student", "creator"]
 
 
 def generate_resume_pdf(data: dict, template: TemplateName = "basic") -> str:
@@ -50,6 +51,8 @@ def generate_resume_pdf(data: dict, template: TemplateName = "basic") -> str:
         build_executive_resume(str(output_path), payload)
     elif template == "student":
         build_student_resume(str(output_path), payload)
+    elif template == "creator":
+        build_creator_resume(str(output_path), payload)
     else:
         build_basic_resume(str(output_path), payload)
 

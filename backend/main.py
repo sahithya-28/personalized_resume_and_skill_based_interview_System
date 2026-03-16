@@ -153,6 +153,20 @@ RESUME_TEMPLATE_CATALOG: list[dict] = [
             {"key": "achievements", "label": "Achievements", "placeholder": "Hackathons, competitions, scholarships", "required": False},
         ],
     },
+    {
+        "id": "creator",
+        "name": "Creator",
+        "description": "Content-heavy single-column style inspired by modern creator resumes",
+        "preview_url": "/static/resume_previews/creator.svg",
+        "fields": [
+            {"key": "experience", "label": "Experience", "placeholder": "Company/Role\\nRole subtitle\\nImpact bullet 1\\nImpact bullet 2", "required": True},
+            {"key": "projects", "label": "Projects", "placeholder": "Project name\\nImpact bullet 1\\nImpact bullet 2", "required": True},
+            {"key": "education", "label": "Education", "placeholder": "Degree, institute\\nDates/location\\nCoursework/achievements", "required": True},
+            {"key": "skills", "label": "Skills", "placeholder": "Languages: ...\\nTools: ...", "required": True},
+            {"key": "summary", "label": "Summary", "placeholder": "Optional one-line profile", "required": False},
+            {"key": "certifications", "label": "Certifications", "placeholder": "Optional certifications", "required": False},
+        ],
+    },
 ]
 
 
@@ -275,6 +289,7 @@ def health() -> dict:
 
 
 @app.get("/resume-templates")
+@app.get("/api/resume-templates")
 def list_resume_templates() -> dict:
     return {
         "default_template": "basic",

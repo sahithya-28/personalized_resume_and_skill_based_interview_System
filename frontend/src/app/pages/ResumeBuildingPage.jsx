@@ -105,6 +105,20 @@ const fallbackTemplates = [
       { key: 'achievements', label: 'Achievements', placeholder: 'Hackathons, competitions, scholarships', required: false },
     ],
   },
+  {
+    id: 'creator',
+    name: 'Creator',
+    description: 'Content-heavy single-column style inspired by creator resumes',
+    preview_url: '/static/resume_previews/creator.svg',
+    fields: [
+      { key: 'experience', label: 'Experience', placeholder: 'Company/Role\nRole subtitle\nImpact bullet 1\nImpact bullet 2', required: true },
+      { key: 'projects', label: 'Projects', placeholder: 'Project name\nImpact bullet 1\nImpact bullet 2', required: true },
+      { key: 'education', label: 'Education', placeholder: 'Degree, institute\nDates/location\nCoursework/achievements', required: true },
+      { key: 'skills', label: 'Skills', placeholder: 'Languages: ...\nTools: ...', required: true },
+      { key: 'summary', label: 'Summary', placeholder: 'Optional one-line profile', required: false },
+      { key: 'certifications', label: 'Certifications', placeholder: 'Optional certifications', required: false },
+    ],
+  },
 ];
 
 const templateSampleText = {
@@ -206,6 +220,47 @@ const templateSampleText = {
     projects: [{ name: 'Student Performance Predictor', stack: 'Python, scikit-learn', bullets: ['Built model with 82% accuracy on validation data.'] }],
     education: ['B.Tech in CSE - JNTU Hyderabad (2021 - 2025)', 'CGPA: 8.8/10'],
     certifications: ['NPTEL Python for Data Science'],
+  },
+  creator: {
+    name: 'Harshibar',
+    role: 'Creator | Product Educator',
+    contact: '+555 555 5555 | hello@email.com | harshibar | U.S. Citizen',
+    summary: ['Creator and builder focused on product education, automation, and design systems.'],
+    skills: ['Python', 'JavaScript (React.js)', 'HTML/CSS', 'SQL', 'Figma', 'Notion', 'Jira', 'GitHub'],
+    experience: [
+      {
+        title: 'Creator (@harshibar) | YouTube',
+        company: 'San Francisco, CA',
+        duration: 'Aug 2019 - Present',
+        bullets: [
+          'Grew channel to 60k+ subscribers with 80+ videos on tech and productivity.',
+          'Partnered with brands and increased video impressions by 2.5M in 3 months.',
+        ],
+      },
+      {
+        title: 'Software Engineer | Google Verily',
+        company: 'San Francisco, CA',
+        duration: 'Aug 2018 - Sep 2019',
+        bullets: [
+          'Led dashboard rebuild to process 50k blood samples and improved QA throughput.',
+          'Shipped process automation that saved significant operational effort annually.',
+        ],
+      },
+    ],
+    projects: [
+      {
+        name: 'Hyknx Consulting',
+        stack: 'Mentorship Program',
+        bullets: ['Mentored 15 students; achieved 100% acceptance outcomes for target schools.'],
+      },
+      {
+        name: 'CommonIntern',
+        stack: 'Python, Selenium, BeautifulSoup',
+        bullets: ['Built auto-apply tool and open-sourced it with strong developer traction.'],
+      },
+    ],
+    education: ['Wellesley College - B.A. in Computer Science and Pre-Med', 'Aug 2014 - May 2018 | Wellesley, MA'],
+    certifications: ['Google Analytics', 'DaVinci Resolve', 'OBS'],
   },
 };
 
@@ -685,15 +740,18 @@ export default function ResumeBuildingPage() {
                 {resolvePreviewUrl(selectedTemplate?.preview_url, selectedTemplate?.name, selectedTemplate?.id) ? (
                   <div className="mt-3 rounded-xl border border-teal-200 bg-teal-50 p-3">
                     <p className="text-sm font-semibold text-teal-800 mb-2">Selected Template Preview</p>
-                    <img
-                      src={resolvePreviewUrl(selectedTemplate?.preview_url, selectedTemplate?.name, selectedTemplate?.id)}
-                      alt={`${selectedTemplate?.name || 'Selected'} resume preview`}
-                      className="w-full max-w-2xl h-auto rounded-lg border border-teal-100 bg-white"
-                      onError={(event) => {
-                        event.currentTarget.onerror = null;
-                        event.currentTarget.src = buildFallbackPreviewDataUri(selectedTemplate?.id, selectedTemplate?.name);
-                      }}
-                    />
+                    <div className="w-full max-w-2xl aspect-[3/4] rounded-lg border border-teal-100 bg-white overflow-hidden">
+                      <img
+                        src={resolvePreviewUrl(selectedTemplate?.preview_url, selectedTemplate?.name, selectedTemplate?.id)}
+                        alt={`${selectedTemplate?.name || 'Selected'} resume preview`}
+                        className="w-full h-full object-contain bg-white"
+                        loading="eager"
+                        onError={(event) => {
+                          event.currentTarget.onerror = null;
+                          event.currentTarget.src = buildFallbackPreviewDataUri(selectedTemplate?.id, selectedTemplate?.name);
+                        }}
+                      />
+                    </div>
                   </div>
                 ) : null}
               </div>

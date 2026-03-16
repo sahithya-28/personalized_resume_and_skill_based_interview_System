@@ -1,0 +1,139 @@
+from __future__ import annotations
+
+SKILL_TAXONOMY: dict[str, dict[str, str]] = {
+    "Programming Languages": {
+        "python": "General-purpose language used for backend APIs, automation, data work, and machine learning.",
+        "java": "Enterprise language commonly used for backend systems and object-oriented development.",
+        "javascript": "Language used for web interfaces, frontend logic, and full-stack applications.",
+        "typescript": "Typed superset of JavaScript used in large frontend and backend applications.",
+        "c": "Systems programming language used for low-level and performance-critical software.",
+        "c++": "Object-oriented and systems programming language used for performance-intensive applications.",
+        "c#": "Language used in .NET applications, desktop software, and backend services.",
+        "go": "Backend and infrastructure language commonly used for concurrent services and tooling.",
+        "sql": "Language for querying, joining, and managing relational data.",
+    },
+    "Frameworks": {
+        "spring": "Java application framework used for enterprise applications and dependency injection.",
+        "spring boot": "Java framework for building REST APIs and microservices quickly.",
+        "django": "Python web framework used for MVC-style web applications and APIs.",
+        "flask": "Python microframework used for lightweight backend applications and APIs.",
+        "fastapi": "Python API framework focused on performance and type-safe backend development.",
+        "react": "Frontend library for building interactive user interfaces with components.",
+        "angular": "Frontend framework for large single-page applications.",
+        "vue": "Frontend framework for reactive single-page applications.",
+        "node.js": "JavaScript runtime used for backend services and scripting.",
+        "express": "Node.js web framework for backend APIs and middleware-based services.",
+        "tensorflow": "Machine learning framework for training and serving neural models.",
+        "pytorch": "Deep learning framework used for research and production model development.",
+    },
+    "Databases": {
+        "mysql": "Relational database used for structured transactional applications.",
+        "postgresql": "Advanced relational database used for transactional and analytical workloads.",
+        "mongodb": "Document database used for flexible schemas and JSON-style records.",
+        "sqlite": "Embedded relational database often used in lightweight applications.",
+        "redis": "In-memory data store used for caching, queues, and fast lookups.",
+        "oracle": "Enterprise relational database used in large business systems.",
+    },
+    "Tools": {
+        "git": "Version control system used for collaborative software development.",
+        "github": "Git hosting platform used for code collaboration and repository management.",
+        "docker": "Containerization tool used for packaging and deploying applications.",
+        "kubernetes": "Container orchestration platform used for scaling and managing services.",
+        "jenkins": "CI/CD automation server for builds and deployments.",
+        "terraform": "Infrastructure-as-code tool for provisioning cloud resources.",
+        "postman": "API testing and collaboration tool.",
+        "linux": "Operating system environment widely used for servers and development.",
+        "aws": "Cloud platform used for infrastructure, storage, compute, and managed services.",
+        "azure": "Cloud platform used for enterprise application hosting and data services.",
+        "gcp": "Google Cloud platform for compute, data, and ML services.",
+    },
+    "Concepts": {
+        "data structures": "Core computer science concept involving efficient organization of data.",
+        "algorithms": "Problem-solving procedures and complexity trade-offs in software systems.",
+        "object oriented programming": "Programming paradigm focused on classes, objects, and abstraction.",
+        "oop": "Programming paradigm focused on classes, objects, and abstraction.",
+        "rest api": "Architectural style for HTTP-based backend service interfaces.",
+        "microservices": "Distributed architecture using independently deployable backend services.",
+        "system design": "Design of scalable, reliable, and maintainable software systems.",
+        "machine learning": "Data-driven modeling for prediction, classification, and pattern detection.",
+        "deep learning": "Neural-network-based machine learning for complex pattern tasks.",
+        "nlp": "Natural language processing for text understanding and language applications.",
+        "computer vision": "Image and video understanding using machine learning.",
+        "ci/cd": "Continuous integration and delivery practices for rapid deployment.",
+        "agile": "Iterative software delivery and cross-functional collaboration process.",
+    },
+}
+
+SKILL_ALIASES: dict[str, str] = {
+    "nodejs": "node.js",
+    "node": "node.js",
+    "rest apis": "rest api",
+    "restful apis": "rest api",
+    "oops": "oop",
+    "object-oriented programming": "object oriented programming",
+    "postgres": "postgresql",
+    "py": "python",
+    "js": "javascript",
+    "k8s": "kubernetes",
+    "containers": "docker",
+}
+
+TECH_PATTERN_ALIASES: dict[str, list[str]] = {
+    "spring boot": ["spring boot", "boot-based api", "spring service"],
+    "docker": ["docker", "containerized", "containerisation", "containerized microservices", "container deployment"],
+    "kubernetes": ["kubernetes", "k8s", "cluster deployment", "pod deployment"],
+    "rest api": ["rest api", "restful service", "api endpoint", "backend api"],
+    "microservices": ["microservices", "distributed services", "service-based architecture"],
+    "machine learning": ["machine learning", "predictive modeling", "classification model", "regression model"],
+    "react": ["react", "react.js", "component-based ui", "frontend components"],
+    "fastapi": ["fastapi", "python api", "async api backend"],
+}
+
+JOB_TITLE_HINTS: list[str] = [
+    "software engineer",
+    "backend developer",
+    "frontend developer",
+    "full stack developer",
+    "data scientist",
+    "data analyst",
+    "devops engineer",
+    "machine learning engineer",
+    "engineering manager",
+    "business analyst",
+]
+
+CERTIFICATION_HINTS: list[str] = [
+    "aws certified",
+    "google cloud",
+    "azure",
+    "coursera",
+    "nptel",
+    "pmp",
+    "cbap",
+    "scrum",
+    "oracle certified",
+]
+
+IDEAL_PROFILE_TEXT: dict[str, str] = {
+    "Backend Developer": "Builds scalable APIs, database-backed services, authentication, microservices, REST APIs, SQL, Python or Java backend systems.",
+    "Data Scientist": "Works on machine learning, data analysis, model evaluation, feature engineering, NLP, Python, statistics, and experimentation.",
+    "Frontend Developer": "Builds modern responsive interfaces using JavaScript or TypeScript, React or Angular, component design, accessibility, and frontend performance.",
+    "DevOps Engineer": "Focuses on cloud platforms, Linux, Docker, Kubernetes, CI/CD pipelines, observability, automation, and infrastructure as code.",
+}
+
+INTERVIEW_TOPIC_MAP: dict[str, list[str]] = {
+    "java": ["Java OOP concepts", "Collections, concurrency, and JVM basics"],
+    "python": ["Python internals and data structures", "API design and code readability"],
+    "spring boot": ["Spring Boot dependency injection", "Spring Boot REST APIs and validation"],
+    "django": ["Django ORM and request lifecycle", "Authentication and deployment patterns"],
+    "react": ["React state management", "Rendering performance and component design"],
+    "mysql": ["SQL joins and indexing", "Transactions and normalization"],
+    "postgresql": ["Query planning and indexing", "Transactions and locking"],
+    "mongodb": ["Schema design and trade-offs", "Aggregation pipeline use-cases"],
+    "docker": ["Dockerfiles and image layering", "Container debugging and deployment flow"],
+    "kubernetes": ["Pods, services, and deployments", "Scaling and rollout strategies"],
+    "data structures": ["Arrays, trees, graphs, and complexity", "Choosing the right data structure"],
+    "object oriented programming": ["Inheritance vs composition", "SOLID principles and class design"],
+    "rest api": ["REST design conventions", "Authentication, status codes, and versioning"],
+    "machine learning": ["Model evaluation metrics", "Bias-variance and feature engineering"],
+}

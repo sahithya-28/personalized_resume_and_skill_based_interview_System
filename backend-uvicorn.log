@@ -1,0 +1,17 @@
+INFO:     127.0.0.1:63337 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50661 - "OPTIONS /auth/register HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50661 - "POST /auth/register HTTP/1.1" 409 Conflict
+INFO:     127.0.0.1:64001 - "OPTIONS /auth/login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64001 - "POST /auth/login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59449 - "POST /analyze-resume HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57260 - "POST /analyze-resume HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50377 - "OPTIONS /skill-verification/matched-skills HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50377 - "OPTIONS /skill-verification/matched-skills HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50377 - "POST /skill-verification/matched-skills HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58626 - "POST /skill-verification/matched-skills HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51071 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51934 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61172 - "POST /analyze-resume HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61172 - "POST /analyze-resume HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49239 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52916 - "POST /analyze-resume HTTP/1.1" 200 OK

@@ -1,6 +1,13 @@
-﻿pdfplumber
+pdfplumber
+PyPDF2
 python-docx
 reportlab
 fastapi
 uvicorn[standard]
 python-multipart
+nltk
+spacy
+scikit-learn
+sentence-transformers
+networkx
+plotly

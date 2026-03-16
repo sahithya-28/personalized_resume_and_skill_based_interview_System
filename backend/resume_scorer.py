@@ -1,4 +1,4 @@
-﻿from __future__ import annotations
+from __future__ import annotations
 
 import sys
 from pathlib import Path
@@ -9,8 +9,7 @@ ROOT_DIR = Path(__file__).resolve().parent.parent
 if str(ROOT_DIR) not in sys.path:
     sys.path.append(str(ROOT_DIR))
 
-from src.resume_parser.section_detector import detect_sections
-from src.resume_parser.skill_extractor import extract_skills
+from src.resume_analysis import build_advanced_resume_report
 from src.resume_parser.text_extractor import extract_text_from_pdf
 from src.vulnerability_engine.gap_detector import detect_year_gaps
 from src.vulnerability_engine.vulnerability_rules import detect_vulnerabilities
@@ -30,40 +29,33 @@ def extract_text_from_file(path: str) -> str:
     raise ValueError("Only PDF and DOCX files are supported")
 
 
-def _section_score(section_text: str) -> int:
-    content = (section_text or "").strip()
-    if not content:
-        return 0
-    length = len(content)
-    if length >= 180:
-        return 100
-    if length >= 80:
-        return 75
-    return 50
-
-
 def analyze_resume_text(text: str) -> dict:
-    sections = detect_sections(text)
-    combined_skill_text = (sections.get("skills", "") + "\n" + text).strip()
-    skills = extract_skills(combined_skill_text)
+    advanced = build_advanced_resume_report(text)
+
+    parsed_data = advanced.get("parsed_data", {})
+    sections = parsed_data.get("sections", {})
+    skills = advanced.get("skill_extraction", {}).get("detected_skills", [])
     gaps = detect_year_gaps(sections.get("education", ""))
     vulnerabilities = detect_vulnerabilities(sections, skills, gaps)
 
-    category_scores = {
-        "education": _section_score(sections.get("education", "")),
-        "skills": min(100, max(0, len(skills) * 10)) if skills else 0,
-        "projects": _section_score(sections.get("projects", "")),
-        "experience": _section_score(sections.get("experience", "")),
-    }
-
-    average_score = sum(category_scores.values()) / len(category_scores)
-    penalty = min(20, len(vulnerabilities) * 5)
-    overall_score = int(max(0, round(average_score - penalty)))
+    resume_score = advanced.get("resume_score", {})
+    score_breakdown = resume_score.get("breakdown", {})
+    completeness = advanced.get("section_completeness", {}).get("required", {})
+    evidence = advanced.get("skill_verification", {})
+    strong_or_moderate = sum(
+        1 for item in evidence.values() if item.get("status") in {"Strong Evidence", "Moderate Evidence"}
+    )
 
     return {
-        "overall_score": overall_score,
-        "category_scores": category_scores,
+        "overall_score": int(resume_score.get("total", 0)),
+        "category_scores": {
+            "education": 100 if completeness.get("education") else 0,
+            "skills": min(100, strong_or_moderate * 10 + (20 if skills else 0)),
+            "projects": 100 if completeness.get("projects") else 0,
+            "experience": 100 if completeness.get("experience") else 0,
+        },
         "skills": skills,
         "sections": sections,
         "vulnerabilities": vulnerabilities,
+        **advanced,
     }

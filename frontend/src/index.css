@@ -6,6 +6,14 @@ body {
   background-color: #f9fafb;
   font-family: 'Inter', sans-serif;
 }
+
+html {
+  overflow-y: scroll;
+}
+
+img {
+  display: block;
+}
 @keyframes fadeSlideUp {
   0% {
     opacity: 0;

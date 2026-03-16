@@ -12,8 +12,8 @@ export default function ResumeUploadPage() {
   const navigate = useNavigate();
 
   const buildExtractedPreview = (analysis) => {
-    const sections = analysis?.sections || {};
-    const sectionOrder = ['education', 'skills', 'projects', 'experience'];
+    const sections = analysis?.sections || analysis?.parsed_data?.sections || {};
+    const sectionOrder = ['summary', 'education', 'skills', 'projects', 'experience', 'certifications', 'achievements'];
     const lines = [];
 
     sectionOrder.forEach((name) => {
@@ -60,7 +60,7 @@ export default function ResumeUploadPage() {
     if (!pendingAnalysis) return;
     sessionStorage.setItem('resumeAnalysis', JSON.stringify(pendingAnalysis));
     sessionStorage.removeItem('interviewSession');
-    navigate('/skill-verification');
+    navigate('/resume-score');
   };
 
   const handleReupload = () => {
