@@ -1,5 +1,5 @@
 import re
-from src.utils.text_cleaner import clean_text
+from ..utils.text_cleaner import clean_text
 
 SECTION_HEADERS = {
     "education": ["education", "academic", "qualification"],

@@ -22,9 +22,11 @@ def parse_resume(text: str) -> dict:
     blocks = split_resume_blocks(clean)
     predicted = predict_section_labels(blocks)
     sections = build_sections(blocks, predicted)
+    structured_sections = build_structured_sections(blocks, predicted)
     return {
         **contact,
         "sections": sections,
+        "structured_sections": structured_sections,
         "section_predictions": predicted,
     }
 
@@ -60,6 +62,35 @@ def build_sections(blocks: list[str], predictions: list[dict]) -> dict[str, str]
     return {key: value.strip() for key, value in sections.items()}
 
 
+def build_structured_sections(blocks: list[str], predictions: list[dict]) -> list[dict]:
+    structured_sections: list[dict] = []
+
+    for block, item in zip(blocks, predictions):
+        lines = [line.strip() for line in block.splitlines() if line.strip()]
+        if not lines:
+            continue
+
+        section_key = _override_from_header(block, item["label"])
+        detected_title = _extract_section_title(lines, section_key)
+        content_lines = _extract_section_content(lines, detected_title)
+
+        if structured_sections and not _has_explicit_header(lines):
+            last = structured_sections[-1]
+            if last.get("key") == section_key:
+                last["content"].extend(content_lines or lines)
+                continue
+
+        structured_sections.append(
+            {
+                "key": section_key,
+                "title": detected_title,
+                "content": content_lines or lines,
+            }
+        )
+
+    return structured_sections
+
+
 def _override_from_header(block: str, predicted_label: str) -> str:
     first_line = block.splitlines()[0].strip().lower()
     normalized = re.sub(r"[:\-\s]+$", "", first_line)
@@ -67,6 +98,34 @@ def _override_from_header(block: str, predicted_label: str) -> str:
         if normalized in headers:
             return section
     return predicted_label
+
+
+def _extract_section_title(lines: list[str], section_key: str) -> str:
+    first_line = lines[0].strip()
+    normalized = re.sub(r"[:\-\s]+$", "", first_line.lower())
+    if normalized in {item for values in HEADER_HINTS.values() for item in values}:
+        return re.sub(r"[:\-\s]+$", "", first_line).strip() or section_key.title()
+    return section_key.title()
+
+
+def _extract_section_content(lines: list[str], title: str) -> list[str]:
+    if not lines:
+        return []
+    normalized_title = re.sub(r"[:\-\s]+$", "", title.lower())
+    first_line_normalized = re.sub(r"[:\-\s]+$", "", lines[0].strip().lower())
+    if first_line_normalized == normalized_title and len(lines) > 1:
+        return lines[1:]
+    return lines
+
+
+def _has_explicit_header(lines: list[str]) -> bool:
+    if not lines:
+        return False
+    first_line = re.sub(r"[:\-\s]+$", "", lines[0].strip().lower())
+    for headers in HEADER_HINTS.values():
+        if first_line in headers:
+            return True
+    return False
 
 
 def _guess_name(lines: list[str]) -> str:

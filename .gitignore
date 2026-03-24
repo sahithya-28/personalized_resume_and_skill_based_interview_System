@@ -13,6 +13,8 @@ uploads/resumes/
 
 # Local runtime data
 backend/app.db
+.env
+.env.*
 
 # Editor / OS
 .vscode/

@@ -1,4 +1,4 @@
-﻿export const API_BASE_URL = 'http://localhost:8000';
+export const API_BASE_URL = 'http://localhost:8000';
 
 async function parseError(response) {
   let detail = `Request failed with status ${response.status}`;
@@ -20,6 +20,80 @@ export async function analyzeResume(file) {
   const response = await fetch(`${API_BASE_URL}/analyze-resume`, {
     method: 'POST',
     body: formData,
+  });
+
+  if (!response.ok) {
+    await parseError(response);
+  }
+
+  return response.json();
+}
+
+export async function extractResumeText(file) {
+  const formData = new FormData();
+  formData.append('file', file);
+
+  const response = await fetch(`${API_BASE_URL}/extract-resume-text`, {
+    method: 'POST',
+    body: formData,
+  });
+
+  if (!response.ok) {
+    await parseError(response);
+  }
+
+  return response.json();
+}
+
+export async function fetchATSScoreFromFile(file) {
+  const formData = new FormData();
+  formData.append('file', file);
+
+  const response = await fetch(`${API_BASE_URL}/ats-score-from-file`, {
+    method: 'POST',
+    body: formData,
+  });
+
+  if (!response.ok) {
+    await parseError(response);
+  }
+
+  return response.json();
+}
+
+export async function fetchATSScore(resumeText) {
+  const response = await fetch(`${API_BASE_URL}/ats-score`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ resume_text: resumeText }),
+  });
+
+  if (!response.ok) {
+    await parseError(response);
+  }
+
+  return response.json();
+}
+
+export async function fetchATSSuggestions(resumeText) {
+  const response = await fetch(`${API_BASE_URL}/ats-suggestions`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ resume_text: resumeText }),
+  });
+
+  if (!response.ok) {
+    await parseError(response);
+  }
+
+  return response.json();
+}
+
+export async function getAtsSuggestions(resumeData) {
+  const response = await fetch(`${API_BASE_URL}/resume/improve`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ resumeData }),
   });
 
   if (!response.ok) {

@@ -1,9 +1,15 @@
-﻿from __future__ import annotations
+from __future__ import annotations
+
+import os
+from pathlib import Path
+
+from dotenv import load_dotenv
+
+load_dotenv(Path(__file__).resolve().parent / ".env")
 
 import json
 import re
 import shutil
-from pathlib import Path
 
 from fastapi import FastAPI, File, HTTPException, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
@@ -12,8 +18,10 @@ from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
 
 from auth_store import authenticate_user, create_user, init_auth_db
+from routes.resume import router as resume_router
 from resume_generator import generate_resume_pdf
-from resume_scorer import analyze_resume_text, extract_text_from_file
+from resume_scorer import analyze_resume_text, calculate_ats_score, calculate_ats_scorecard, extract_text_from_file
+from backend.src.resume_analysis.suggestions import generate_ats_improvement_suggestions, generate_suggestions
 
 app = FastAPI(title="Smart Interview Backend", version="1.1.0")
 
@@ -30,6 +38,7 @@ app.add_middleware(
 
 init_auth_db()
 app.mount("/static", StaticFiles(directory=str(STATIC_DIR)), name="static")
+app.include_router(resume_router)
 
 
 class ResumeGenerateRequest(BaseModel):
@@ -70,6 +79,39 @@ class SkillAnswerScoreRequest(BaseModel):
     skill: str = Field(min_length=1)
     question_id: str = Field(min_length=1)
     answer: str = ""
+
+
+class ImproveResumeRequest(BaseModel):
+    resumeData: dict
+
+
+class ATSScoreRequest(BaseModel):
+    resume_text: str = Field(min_length=1)
+    job_description: str | None = None
+
+
+def _save_uploaded_resume(file: UploadFile, *, error_prefix: str) -> str:
+    suffix = Path(file.filename or "").suffix.lower()
+    if suffix not in {".pdf", ".docx", ".txt"}:
+        raise HTTPException(status_code=400, detail="Only PDF, DOCX, and TXT files are supported")
+
+    upload_dir = Path(__file__).resolve().parent.parent / "uploads" / "resumes"
+    upload_dir.mkdir(parents=True, exist_ok=True)
+
+    safe_name = Path(file.filename).name if file.filename else f"resume{suffix}"
+    target_path = upload_dir / safe_name
+
+    try:
+        with target_path.open("wb") as buffer:
+            shutil.copyfileobj(file.file, buffer)
+        text = extract_text_from_file(str(target_path))
+        if not text.strip():
+            raise HTTPException(status_code=400, detail="Could not extract text from uploaded file")
+        return text.strip()
+    except HTTPException:
+        raise
+    except Exception as exc:
+        raise HTTPException(status_code=500, detail=f"{error_prefix}: {exc}") from exc
 
 
 RESUME_TEMPLATE_CATALOG: list[dict] = [
@@ -349,27 +391,165 @@ def generate_resume(payload: ResumeGenerateRequest):
 
 @app.post("/analyze-resume")
 def analyze_resume(file: UploadFile = File(...)):
-    suffix = Path(file.filename or "").suffix.lower()
-    if suffix not in {".pdf", ".docx"}:
-        raise HTTPException(status_code=400, detail="Only PDF and DOCX files are supported")
-
-    upload_dir = Path(__file__).resolve().parent.parent / "uploads" / "resumes"
-    upload_dir.mkdir(parents=True, exist_ok=True)
-
-    safe_name = Path(file.filename).name if file.filename else f"resume{suffix}"
-    target_path = upload_dir / safe_name
-
     try:
-        with target_path.open("wb") as buffer:
-            shutil.copyfileobj(file.file, buffer)
-        text = extract_text_from_file(str(target_path))
-        if not text.strip():
-            raise HTTPException(status_code=400, detail="Could not extract text from uploaded file")
+        text = _save_uploaded_resume(file, error_prefix="Resume analysis failed")
         return analyze_resume_text(text)
     except HTTPException:
         raise
     except Exception as exc:
         raise HTTPException(status_code=500, detail=f"Resume analysis failed: {exc}") from exc
+
+
+@app.post("/extract-resume-text")
+def extract_resume_text(file: UploadFile = File(...)):
+    text = _save_uploaded_resume(file, error_prefix="Resume text extraction failed")
+    return {"resume_text": text}
+
+
+@app.post("/ats-score")
+def ats_score(payload: ATSScoreRequest):
+    resume_text = payload.resume_text.strip()
+    if not resume_text:
+        raise HTTPException(status_code=400, detail="Resume text is required")
+
+    suggestions_error: dict | None = None
+    try:
+        result = calculate_ats_scorecard(resume_text, job_description=payload.job_description)
+        analysis = analyze_resume_text(resume_text, job_description=payload.job_description)
+        summary = (
+            analysis.get("resume_summary", {}).get("summary_text")
+            or analysis.get("final_report", {}).get("summary")
+            or ""
+        )
+        try:
+            result["suggestions"] = generate_ats_improvement_suggestions(resume_text)
+        except Exception as exc:
+            result["suggestions"] = []
+            suggestions_error = {
+                "error": "AI suggestions failed",
+                "details": str(exc),
+            }
+    except Exception as exc:
+        raise HTTPException(status_code=500, detail=f"ATS scoring failed: {exc}") from exc
+
+    return {
+        **result,
+        "score": result["ats_score"],
+        "summary": summary,
+        "analysis": analysis,
+        "suggestions_error": suggestions_error,
+    }
+
+
+@app.post("/ats-score-from-file")
+def ats_score_from_file(file: UploadFile = File(...)):
+    text = _save_uploaded_resume(file, error_prefix="ATS file scoring failed")
+    if not text.strip():
+        raise HTTPException(
+            status_code=400,
+            detail={
+                "error": "No resume text extracted",
+                "details": "Could not extract text from the uploaded file.",
+            },
+        )
+
+    try:
+        result = calculate_ats_scorecard(text)
+        analysis = analyze_resume_text(text)
+        summary = (
+            analysis.get("resume_summary", {}).get("summary_text")
+            or analysis.get("final_report", {}).get("summary")
+            or ""
+        )
+    except Exception as exc:
+        raise HTTPException(status_code=500, detail=f"ATS file scoring failed: {exc}") from exc
+
+    suggestions_error: dict | None = None
+    try:
+        result["suggestions"] = generate_ats_improvement_suggestions(text)
+    except Exception as exc:
+        result["suggestions"] = []
+        suggestions_error = {
+            "error": "AI suggestions failed",
+            "details": str(exc),
+        }
+
+    return {
+        **result,
+        "score": result["ats_score"],
+        "resume_text": text,
+        "summary": summary,
+        "analysis": analysis,
+        "suggestions_error": suggestions_error,
+    }
+
+
+@app.post("/ats-suggestions")
+def ats_suggestions(payload: ATSScoreRequest):
+    resume_text = payload.resume_text.strip()
+    if not resume_text:
+        raise HTTPException(
+            status_code=400,
+            detail={
+                "error": "No resume text extracted",
+                "details": "Resume text is required",
+            },
+        )
+
+    try:
+        suggestions = generate_ats_improvement_suggestions(resume_text)
+    except Exception as exc:
+        raise HTTPException(
+            status_code=500,
+            detail={
+                "error": "AI suggestions failed",
+                "details": str(exc),
+            },
+        ) from exc
+
+    return {"suggestions": suggestions}
+
+
+@app.post("/resume/improve")
+def improve_resume(payload: ImproveResumeRequest):
+    data = payload.resumeData
+    
+    parts = []
+    
+    if data.get("name"): parts.append(data.get("name"))
+    if data.get("email"): parts.append(data.get("email"))
+    if data.get("phone"): parts.append(data.get("phone"))
+    if data.get("summary"): parts.append("Summary:\n" + data.get("summary"))
+    if data.get("about"): parts.append("About:\n" + data.get("about"))
+    
+    if isinstance(data.get("skills"), list):
+        parts.append("Skills:\n" + ", ".join(data.get("skills")))
+        
+    for key in ["workExperience", "projects", "education", "coursework", "internships"]:
+        items = data.get(key, [])
+        if items and isinstance(items, list):
+            parts.append(f"{key.capitalize()}:")
+            for item in items:
+                if isinstance(item, dict):
+                    parts.append("\n".join(str(v) for v in item.values() if v))
+                elif isinstance(item, str):
+                    parts.append(item)
+                    
+    for cs in data.get("customSections", []):
+        if isinstance(cs, dict):
+            parts.append(f"{cs.get('name', 'Section')}:\n{cs.get('content', '')}")
+            
+    resume_text = "\n\n".join(parts)
+    
+    analysis = analyze_resume_text(resume_text)
+    score = analysis.get("overall_score", 0)
+    
+    suggestions = generate_suggestions(resume_text)
+    
+    return {
+        "score": score,
+        "suggestions": suggestions
+    }
 
 
 @app.post("/skill-verification/matched-skills")

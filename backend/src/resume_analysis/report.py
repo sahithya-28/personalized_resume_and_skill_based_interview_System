@@ -34,7 +34,7 @@ from .skill_intelligence import (
 from .summarization import generate_resume_summary
 
 
-def build_advanced_resume_report(text: str) -> dict:
+def build_advanced_resume_report(text: str, job_description: str | None = None) -> dict:
     artifacts = build_nlp_artifacts(text)
     parsed = parse_resume(artifacts.cleaned_text)
     sections = parsed.get("sections", {})
@@ -83,6 +83,8 @@ def build_advanced_resume_report(text: str) -> dict:
         evidence,
         writing_quality,
         achievements,
+        resume_text=artifacts.cleaned_text,
+        job_description=job_description,
         skill_count=len(skill_data["detected_skills"]),
         project_analysis=projects,
         career_timeline=career_timeline,
@@ -100,6 +102,8 @@ def build_advanced_resume_report(text: str) -> dict:
         score_breakdown=resume_score["breakdown"],
         project_analysis=projects,
         adaptive_analysis=adaptive_analysis,
+        jd_match_score=resume_score.get("jd_match_score", 0.0),
+        jd_missing_skills=resume_score.get("jd_missing_skills", []),
     )
 
     knowledge_graph = build_knowledge_graph(parsed.get("name", ""), skill_data["detected_skills"], projects, entities)

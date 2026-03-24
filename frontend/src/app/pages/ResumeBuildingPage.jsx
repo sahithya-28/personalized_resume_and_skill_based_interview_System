@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react';
-import { Award, FileUp, Loader2, PlusCircle, RefreshCw } from 'lucide-react';
-import { API_BASE_URL, analyzeResume, generateResume } from '../api/resumeApi';
+import { Award, FileUp, Loader2, PlusCircle, RefreshCw, Sparkles } from 'lucide-react';
+import { API_BASE_URL, analyzeResume, generateResume, getAtsSuggestions } from '../api/resumeApi';
 
 const initialForm = {
   name: '',
@@ -407,6 +407,7 @@ export default function ResumeBuildingPage() {
   const [modifyError, setModifyError] = useState('');
   const [modifyInfo, setModifyInfo] = useState('');
   const [modifyRaw, setModifyRaw] = useState(null);
+  const [aiSuggestions, setAiSuggestions] = useState([]);
 
   const categoryEntries = Object.entries(analysis?.category_scores || {});
   const statusLabel = analysis ? getStatusLabel(analysis.overall_score) : '';
@@ -476,17 +477,63 @@ export default function ResumeBuildingPage() {
       setModifyInfo('Uploading and analyzing resume...');
       setModifyReport(null);
       setModifyRaw(null);
+      setAiSuggestions([]);
       const result = await analyzeResume(resumeFile);
       setModifyRaw(result);
       const normalized = {
         overall_score: Number(result?.overall_score ?? result?.score ?? 0),
         category_scores: result?.category_scores || {},
         sections: result?.sections || {},
+        parsed_data: result?.parsed_data || {},
         skills: Array.isArray(result?.skills) ? result.skills : [],
         vulnerabilities: Array.isArray(result?.vulnerabilities) ? result.vulnerabilities : [],
       };
       setModifyReport(normalized);
       setModifyInfo('ATS analysis completed.');
+      
+      if (mode === 'upload') {
+        const extractedSkills = Array.isArray(normalized.skills) ? normalized.skills.join(', ') : '';
+        const parsed = normalized.parsed_data || {};
+        setForm((prev) => ({
+          ...prev,
+          name: parsed.name || prev.name,
+          email: parsed.email || prev.email,
+          phone: parsed.phone || prev.phone,
+          summary: prev.summary || '',
+          skills: extractedSkills || prev.skills,
+          projects: String(normalized.sections?.projects || '').trim() || prev.projects,
+          experience: String(normalized.sections?.experience || '').trim() || prev.experience,
+          education: String(normalized.sections?.education || '').trim() || prev.education,
+          certifications: String(normalized.sections?.certifications || '').trim() || prev.certifications,
+          achievements: String(normalized.sections?.achievements || '').trim() || prev.achievements,
+        }));
+        setMode('create');
+      } else if (mode === 'score') {
+        setModifyInfo('Generating AI Suggestions...');
+        try {
+          const parsed = normalized.parsed_data || {};
+          const extractedSkills = Array.isArray(normalized.skills) ? normalized.skills.join(', ') : '';
+          const mappedCopilotData = {
+            name: parsed.name || '',
+            email: parsed.email || '',
+            phone: parsed.phone || '',
+            skills: extractedSkills,
+            projects: String(normalized.sections?.projects || '').trim(),
+            experience: String(normalized.sections?.experience || '').trim(),
+            education: String(normalized.sections?.education || '').trim(),
+            certifications: String(normalized.sections?.certifications || '').trim(),
+            achievements: String(normalized.sections?.achievements || '').trim(),
+          };
+          const aiRes = await getAtsSuggestions(mappedCopilotData);
+          if (aiRes.suggestions) {
+            setAiSuggestions(aiRes.suggestions);
+          }
+          setModifyInfo('Analysis & Suggestions completed.');
+        } catch (openaiErr) {
+          console.error(openaiErr);
+          setModifyInfo('Analysis completed (AI suggestions unavailable).');
+        }
+      }
     } catch (err) {
       setModifyError(err.message || 'Failed to analyze resume for ATS score.');
       setModifyInfo('');
@@ -499,14 +546,20 @@ export default function ResumeBuildingPage() {
     if (!modifyReport) return;
 
     const extractedSkills = Array.isArray(modifyReport.skills) ? modifyReport.skills.join(', ') : '';
+    const parsed = modifyReport.parsed_data || {};
 
     setForm((prev) => ({
       ...prev,
+      name: parsed.name || prev.name,
+      email: parsed.email || prev.email,
+      phone: parsed.phone || prev.phone,
       summary: prev.summary || '',
       skills: extractedSkills || prev.skills,
       projects: String(modifyReport.sections?.projects || '').trim() || prev.projects,
       experience: String(modifyReport.sections?.experience || '').trim() || prev.experience,
       education: String(modifyReport.sections?.education || '').trim() || prev.education,
+      certifications: String(modifyReport.sections?.certifications || '').trim() || prev.certifications,
+      achievements: String(modifyReport.sections?.achievements || '').trim() || prev.achievements,
     }));
     setMode('create');
   };
@@ -518,18 +571,7 @@ export default function ResumeBuildingPage() {
         <p className="text-gray-600 text-center mb-10">Modify existing resume with ATS insights or create a new one with templates.</p>
 
         {!mode ? (
-          <div className="grid md:grid-cols-2 gap-6 mb-8">
-            <button
-              onClick={() => setMode('modify')}
-              className="bg-white p-8 rounded-2xl shadow-lg text-left hover:shadow-xl transition-all"
-            >
-              <div className="w-12 h-12 rounded-xl bg-amber-100 text-amber-700 flex items-center justify-center mb-4">
-                <RefreshCw className="w-6 h-6" />
-              </div>
-              <h2 className="text-2xl font-bold text-gray-900 mb-2">Modify Existing</h2>
-              <p className="text-gray-600">Upload your resume, get ATS score (Resume Worded-style), and view changes needed.</p>
-            </button>
-
+          <div className="grid md:grid-cols-3 gap-6 mb-8">
             <button
               onClick={() => setMode('create')}
               className="bg-white p-8 rounded-2xl shadow-lg text-left hover:shadow-xl transition-all"
@@ -540,16 +582,41 @@ export default function ResumeBuildingPage() {
               <h2 className="text-2xl font-bold text-gray-900 mb-2">Create New</h2>
               <p className="text-gray-600">Pick a template and enter details based on that template structure.</p>
             </button>
+
+            <button
+              onClick={() => setMode('upload')}
+              className="bg-white p-8 rounded-2xl shadow-lg text-left hover:shadow-xl transition-all"
+            >
+              <div className="w-12 h-12 rounded-xl bg-blue-100 text-blue-700 flex items-center justify-center mb-4">
+                <FileUp className="w-6 h-6" />
+              </div>
+              <h2 className="text-2xl font-bold text-gray-900 mb-2">Upload Resume</h2>
+              <p className="text-gray-600">Upload existing resume to auto-fill the builder instantly.</p>
+            </button>
+
+            <button
+              onClick={() => setMode('score')}
+              className="bg-white p-8 rounded-2xl shadow-lg text-left hover:shadow-xl transition-all"
+            >
+              <div className="w-12 h-12 rounded-xl bg-amber-100 text-amber-700 flex items-center justify-center mb-4">
+                <RefreshCw className="w-6 h-6" />
+              </div>
+              <h2 className="text-2xl font-bold text-gray-900 mb-2">Get ATS Score</h2>
+              <p className="text-gray-600">Get ATS score and AI suggestions before modifying in the live editor.</p>
+            </button>
           </div>
         ) : null}
 
         {mode ? (
           <div className="mb-6 flex flex-wrap gap-3">
-            <button onClick={() => setMode('modify')} className={`px-4 py-2 rounded-lg font-semibold ${mode === 'modify' ? 'bg-amber-600 text-white' : 'bg-white border border-gray-300 text-gray-700'}`}>
-              Modify Existing
-            </button>
             <button onClick={() => setMode('create')} className={`px-4 py-2 rounded-lg font-semibold ${mode === 'create' ? 'bg-teal-600 text-white' : 'bg-white border border-gray-300 text-gray-700'}`}>
               Create New
+            </button>
+            <button onClick={() => setMode('upload')} className={`px-4 py-2 rounded-lg font-semibold ${mode === 'upload' ? 'bg-blue-600 text-white' : 'bg-white border border-gray-300 text-gray-700'}`}>
+              Upload Resume
+            </button>
+            <button onClick={() => setMode('score')} className={`px-4 py-2 rounded-lg font-semibold ${mode === 'score' ? 'bg-amber-600 text-white' : 'bg-white border border-gray-300 text-gray-700'}`}>
+              Get ATS Score
             </button>
             <button onClick={() => setMode('')} className="px-4 py-2 rounded-lg font-semibold bg-white border border-gray-300 text-gray-700">
               Back
@@ -557,10 +624,10 @@ export default function ResumeBuildingPage() {
           </div>
         ) : null}
 
-        {mode === 'modify' ? (
+        {mode === 'upload' || mode === 'score' ? (
           <div className="space-y-6">
             <div className="bg-white p-8 rounded-2xl shadow-xl space-y-4">
-              <h2 className="text-2xl font-bold text-gray-900">Modify Existing Resume</h2>
+              <h2 className="text-2xl font-bold text-gray-900">{mode === 'score' ? 'Get ATS Score & AI Suggestions' : 'Auto-Fill Resume from File'}</h2>
               <label className="block border-2 border-dashed border-amber-300 rounded-xl p-8 text-center cursor-pointer hover:border-amber-500 transition-colors">
                 <div className="w-14 h-14 bg-amber-100 rounded-full flex items-center justify-center mx-auto mb-3">
                   <FileUp className="w-7 h-7 text-amber-700" />
@@ -577,22 +644,23 @@ export default function ResumeBuildingPage() {
                     setModifyInfo('');
                     setModifyReport(null);
                     setModifyRaw(null);
+                    setAiSuggestions([]);
                   }}
                 />
               </label>
 
               {resumeFile ? <p className="text-sm text-gray-700">Selected: <span className="font-semibold">{resumeFile.name}</span></p> : null}
-              {modifyLoading ? <p className="text-sm text-amber-700">Analyzing resume and calculating ATS score...</p> : null}
+              {modifyLoading ? <p className="text-sm text-amber-700">Processing resume...</p> : null}
               {!modifyLoading && modifyInfo ? <p className="text-sm text-green-700">{modifyInfo}</p> : null}
               {modifyError ? <div className="bg-red-50 border border-red-200 text-red-700 rounded-lg px-4 py-3">{modifyError}</div> : null}
 
-              <button type="button" onClick={analyzeExistingResume} disabled={modifyLoading} className="px-6 py-3 bg-amber-600 text-white rounded-xl hover:bg-amber-700 disabled:opacity-60 font-semibold inline-flex items-center gap-2">
+              <button type="button" onClick={analyzeExistingResume} disabled={modifyLoading} className={`px-6 py-3 text-white rounded-xl disabled:opacity-60 font-semibold inline-flex items-center gap-2 ${mode === 'score' ? 'bg-amber-600 hover:bg-amber-700' : 'bg-blue-600 hover:bg-blue-700'}`}>
                 {modifyLoading ? <Loader2 className="w-5 h-5 animate-spin" /> : null}
-                {modifyLoading ? 'Analyzing...' : 'Get ATS Score & Changes'}
+                {modifyLoading ? 'Processing...' : (mode === 'score' ? 'Get ATS Score & AI Suggestions' : 'Auto-Fill Resume')}
               </button>
             </div>
 
-            {modifyReport ? (
+            {mode === 'score' && modifyReport ? (
               <div className="bg-white p-8 rounded-2xl shadow-xl">
                 <h3 className="text-2xl font-bold text-gray-900 mb-4">ATS Analysis (Resume Worded-style)</h3>
 
@@ -620,7 +688,7 @@ export default function ResumeBuildingPage() {
                 </div>
 
                 <div className="bg-amber-50 border border-amber-200 rounded-xl p-5 mb-6">
-                  <h4 className="text-lg font-bold text-gray-900 mb-3">Recommended Changes</h4>
+                  <h4 className="text-lg font-bold text-gray-900 mb-3 block">Overall Observations</h4>
                   {modifySuggestions.length ? (
                     <ul className="space-y-2 text-sm text-gray-800">
                       {modifySuggestions.map((item, idx) => (
@@ -628,12 +696,29 @@ export default function ResumeBuildingPage() {
                       ))}
                     </ul>
                   ) : (
-                    <p className="text-green-700">No major changes required.</p>
+                    <p className="text-green-700">No major observations.</p>
                   )}
                 </div>
 
-                <button onClick={useExtractedInCreateNew} className="px-6 py-3 bg-teal-600 text-white rounded-xl hover:bg-teal-700 font-semibold">
-                  Use Extracted Details in Create New
+                {aiSuggestions.length > 0 && (
+                  <div className="bg-teal-50 border border-teal-200 rounded-xl p-5 mb-6">
+                    <h4 className="text-lg font-bold text-gray-900 mb-3 flex items-center gap-2">
+                      <Sparkles className="w-5 h-5 text-teal-600" />
+                      AI Copilot Contextual Suggestions
+                    </h4>
+                    <ul className="space-y-2 text-sm text-gray-800">
+                      {aiSuggestions.map((item, idx) => (
+                        <li key={`ai-${idx}`} className="bg-white border border-teal-200 rounded-lg px-3 py-2 flex items-start gap-2">
+                           <span className="text-teal-600 mt-0.5">•</span>
+                           <span>{item}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+
+                <button onClick={useExtractedInCreateNew} className="px-6 py-3 bg-teal-600 text-white rounded-xl hover:bg-teal-700 font-semibold inline-flex items-center gap-2">
+                  Edit Resume with Extracted Details <Sparkles className="w-4 h-4" />
                 </button>
               </div>
             ) : null}

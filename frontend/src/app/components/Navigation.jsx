@@ -36,7 +36,7 @@ export default function Navigation() {
         <div className="flex justify-between items-center h-16">
           <Link to="/" className="flex items-center space-x-2">
             <GraduationCap className="w-6 h-6 text-indigo-600" />
-            <span className="font-bold text-gray-900 text-lg">Smart Resume Interview</span>
+            <span className="font-bold text-gray-900 text-lg">HireMind</span>
           </Link>
 
           <div className="flex items-center space-x-4">

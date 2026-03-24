@@ -14,9 +14,14 @@ import SkillVerificationPage from './pages/SkillVerificationPage';
 import InterviewQuestionsPage from './pages/InterviewQuestionsPage';
 import FeedbackPage from './pages/FeedbackPage';
 import SkillVerificationHistoryPage from './pages/SkillVerificationHistoryPage';
-import ResumeBuildingPage from './pages/ResumeBuildingPage';
+import ResumeBuilderPage from '../pages/ResumeBuilderPage';
 import AboutPage from './pages/AboutPage';
 import ContactPage from './pages/ContactPage';
+import TemplateSelectionPage from "../pages/TemplateSelectionPage.jsx";
+import ResumeEntryPage from '../pages/ResumeEntryPage';
+import ResumeFlowUploadPage from '../pages/ResumeUploadPage';
+import ATSScorePage from '../pages/ATSScorePage';
+import ResumeImprovePage from '../pages/ResumeImprovePage';
 
 function ScrollToTopOnRouteChange() {
   const { pathname } = useLocation();
@@ -48,9 +53,16 @@ export default function App() {
           <Route path="/interview-questions" element={<InterviewQuestionsPage />} />
           <Route path="/feedback" element={<FeedbackPage />} />
           <Route path="/skill-verification-history" element={<SkillVerificationHistoryPage />} />
-          <Route path="/resume-building" element={<ResumeBuildingPage />} />
+          <Route path="/resume" element={<ResumeEntryPage />} />
+          <Route path="/resume/upload" element={<ResumeFlowUploadPage />} />
+          <Route path="/resume/templates" element={<TemplateSelectionPage />} />
+          <Route path="/resume-builder" element={<ResumeBuilderPage />} />
+          <Route path="/resume-building" element={<ResumeEntryPage />} />
+          <Route path="/ats-score" element={<ATSScorePage />} />
+          <Route path="/resume-improve" element={<ResumeImprovePage />} />
           <Route path="/about" element={<AboutPage />} />
           <Route path="/contact" element={<ContactPage />} />
+          <Route path="/resume-templates" element={<TemplateSelectionPage />} />
         </Routes>
       </div>
     </Router>
