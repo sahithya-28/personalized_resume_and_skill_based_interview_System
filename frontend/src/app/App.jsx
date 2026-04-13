@@ -9,7 +9,6 @@ import InterviewPrepPage from './pages/InterviewPrepPage';
 import CompanyPrepPage from './pages/CompanyPrepPage';
 import ResumeUploadPage from './pages/ResumeUploadPage';
 import ResumeScorePage from './pages/ResumeScorePage';
-import VulnerabilitiesPage from './pages/VulnerabilitiesPage';
 import SkillVerificationPage from './pages/SkillVerificationPage';
 import InterviewQuestionsPage from './pages/InterviewQuestionsPage';
 import FeedbackPage from './pages/FeedbackPage';
@@ -48,7 +47,6 @@ export default function App() {
           <Route path="/company-prep" element={<CompanyPrepPage />} />
           <Route path="/resume-upload" element={<ResumeUploadPage />} />
           <Route path="/resume-score" element={<ResumeScorePage />} />
-          <Route path="/vulnerabilities" element={<VulnerabilitiesPage />} />
           <Route path="/skill-verification" element={<SkillVerificationPage />} />
           <Route path="/interview-questions" element={<InterviewQuestionsPage />} />
           <Route path="/feedback" element={<FeedbackPage />} />

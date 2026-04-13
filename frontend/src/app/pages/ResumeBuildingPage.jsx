@@ -378,10 +378,6 @@ function buildChangeSuggestions(report) {
     suggestions.push('Add GitHub/portfolio links in projects section.');
   }
 
-  (report?.vulnerabilities || []).forEach((item) => {
-    suggestions.push(item);
-  });
-
   return Array.from(new Set(suggestions));
 }
 
@@ -486,7 +482,6 @@ export default function ResumeBuildingPage() {
         sections: result?.sections || {},
         parsed_data: result?.parsed_data || {},
         skills: Array.isArray(result?.skills) ? result.skills : [],
-        vulnerabilities: Array.isArray(result?.vulnerabilities) ? result.vulnerabilities : [],
       };
       setModifyReport(normalized);
       setModifyInfo('ATS analysis completed.');

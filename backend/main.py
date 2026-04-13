@@ -21,7 +21,11 @@ from auth_store import authenticate_user, create_user, init_auth_db
 from routes.resume import router as resume_router
 from resume_generator import generate_resume_pdf
 from resume_scorer import analyze_resume_text, calculate_ats_score, calculate_ats_scorecard, extract_text_from_file
-from backend.src.resume_analysis.suggestions import generate_ats_improvement_suggestions, generate_suggestions
+from backend.src.resume_analysis.suggestions import (
+    generate_ats_improvement_suggestions,
+    generate_skill_verification_evaluation,
+    generate_suggestions,
+)
 
 app = FastAPI(title="Smart Interview Backend", version="1.1.0")
 
@@ -79,6 +83,19 @@ class SkillAnswerScoreRequest(BaseModel):
     skill: str = Field(min_length=1)
     question_id: str = Field(min_length=1)
     answer: str = ""
+
+
+class SkillEvaluationAnswer(BaseModel):
+    question: str = ""
+    user_answer: str = ""
+    correct: bool = False
+
+
+class SkillEvaluationRequest(BaseModel):
+    skill: str = Field(min_length=1)
+    score: float = 0
+    total_questions: int = 0
+    answers: list[SkillEvaluationAnswer] = Field(default_factory=list)
 
 
 class ImproveResumeRequest(BaseModel):
@@ -241,6 +258,12 @@ def _skill_aliases() -> dict[str, str]:
         "python3": "python",
         "js": "javascript",
         "ecmascript": "javascript",
+        "mongodb": "mongodb",
+        "mongo": "mongodb",
+        "mongodbdatabase": "mongodb",
+        "oops": "oops",
+        "oop": "oops",
+        "objectorientedprogramming": "oops",
     }
 
 
@@ -256,11 +279,18 @@ def _load_question_banks() -> list[dict]:
         except Exception:
             continue
 
-        questions = data.get("questions") or []
+        if isinstance(data, dict):
+            questions = data.get("questions") or []
+            bank_skill = str(data.get("skill") or file_path.stem).strip()
+        elif isinstance(data, list):
+            questions = data
+            bank_skill = str(file_path.stem).strip()
+        else:
+            continue
+
         if not isinstance(questions, list) or not questions:
             continue
 
-        bank_skill = str(data.get("skill") or file_path.stem).strip()
         banks.append(
             {
                 "file_stem": file_path.stem,
@@ -638,3 +668,13 @@ def score_skill_answer(payload: SkillAnswerScoreRequest):
         "expected_answer": expected_answer,
         **scored,
     }
+
+
+@app.post("/skill-verification/evaluate")
+def evaluate_skill_verification(payload: SkillEvaluationRequest):
+    return generate_skill_verification_evaluation(
+        skill=payload.skill,
+        score=payload.score,
+        total_questions=payload.total_questions,
+        answers=[item.model_dump() for item in payload.answers],
+    )

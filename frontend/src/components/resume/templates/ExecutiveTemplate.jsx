@@ -1,3 +1,5 @@
+import { hasMeaningfulArray, hasMeaningfulText, toBullets } from './renderUtils';
+
 function SidebarSection({ title, children }) {
   return (
     <section>
@@ -30,6 +32,15 @@ export default function ExecutiveTemplate({ data }) {
     skippedSections = {},
   } = data;
 
+  const visibleAbout = !skippedSections.about && hasMeaningfulText(about);
+  const visibleEducation = !skippedSections.education && hasMeaningfulArray(education);
+  const visibleLinks = !skippedSections.links && hasMeaningfulArray(links);
+  const visibleSkills = !skippedSections.skills && hasMeaningfulArray(skills);
+  const visibleExperience = !skippedSections.workExperience && hasMeaningfulArray(workExperience);
+  const visibleCustomSections = !skippedSections.customSections
+    ? (customSections || []).filter((section) => hasMeaningfulText(section?.name) && hasMeaningfulText(section?.content))
+    : [];
+
   return (
     <div className="mx-auto min-h-[1120px] max-w-[820px] bg-white px-1 py-2 text-black">
       <div className="mx-1 overflow-hidden border border-slate-300 bg-white">
@@ -40,35 +51,33 @@ export default function ExecutiveTemplate({ data }) {
 
         <div className="grid gap-8 px-6 py-5 md:grid-cols-[0.78fr_1.5fr]">
           <aside className="space-y-6">
-            {!skippedSections.about ? (
+            {visibleAbout ? (
               <SidebarSection title="About Me">
-                <p className="whitespace-pre-line">{about || ''}</p>
+                <p className="whitespace-pre-line">{about}</p>
               </SidebarSection>
             ) : null}
 
-            {!skippedSections.education ? (
+            {visibleEducation ? (
               <SidebarSection title="Education">
-                {(education.length ? education : [{ degree: 'Degree Name', institution: 'University / College', year: 'Date - Date' }]).map(
-                  (item, index) => (
-                    <div key={`${item.degree}-${index}`} className={index > 0 ? 'mt-3' : ''}>
-                      <p className="font-semibold">{item.degree}</p>
-                      <p>{item.institution}</p>
-                      <p>{item.year}</p>
-                    </div>
-                  )
-                )}
+                {education.map((item, index) => (
+                  <div key={`${item.degree}-${index}`} className={index > 0 ? 'mt-3' : ''}>
+                    <p className="font-semibold">{item.degree}</p>
+                    {hasMeaningfulText(item.institution) ? <p>{item.institution}</p> : null}
+                    {hasMeaningfulText(item.year) ? <p>{item.year}</p> : null}
+                  </div>
+                ))}
               </SidebarSection>
             ) : null}
 
-            {!skippedSections.links ? (
+            {visibleLinks ? (
               <SidebarSection title="Links">
-                {(links.length ? links : [{ label: 'website', value: '' }]).map((item, index) => (
+                {links.map((item, index) => (
                   <p key={`${item.label}-${index}`}>{item.label}{item.value ? ` - ${item.value}` : ''}</p>
                 ))}
               </SidebarSection>
             ) : null}
 
-            {!skippedSections.skills ? (
+            {visibleSkills ? (
               <SidebarSection title="Skills">
                 <div className="space-y-2">
                   {skills.map((skill, index) => (
@@ -80,29 +89,37 @@ export default function ExecutiveTemplate({ data }) {
           </aside>
 
           <main className="space-y-6">
-            {!skippedSections.workExperience ? (
+            {visibleExperience ? (
               <MainSection title="Experience">
                 <div className="space-y-4">
-                  {(workExperience.length ? workExperience : [{ title: 'Name - Title', date: 'Date', description: '' }]).map((item, index) => (
+                  {workExperience.map((item, index) => (
                     <div key={`${item.title}-${index}`}>
                       <div className="flex items-start justify-between gap-4">
                         <div>
                           <p className="font-semibold">{item.title}</p>
-                          {item.company ? <p>{item.company}</p> : null}
+                          {hasMeaningfulText(item.company) ? <p>{item.company}</p> : null}
                         </div>
-                        <p className="whitespace-nowrap">{item.date}</p>
+                        {hasMeaningfulText(item.date) ? <p className="whitespace-nowrap">{item.date}</p> : null}
                       </div>
-                      <p className="mt-1 whitespace-pre-line">{item.description}</p>
+                      <ul className="mt-2 list-disc space-y-1 pl-5">
+                        {toBullets(item.description).map((bullet, bulletIndex) => (
+                          <li key={`${item.title}-${bulletIndex}`}>{bullet}</li>
+                        ))}
+                      </ul>
                     </div>
                   ))}
                 </div>
               </MainSection>
             ) : null}
 
-            {!skippedSections.customSections
-              ? customSections.map((section, index) => (
+            {visibleCustomSections.length
+              ? visibleCustomSections.map((section, index) => (
                   <MainSection key={`${section.name}-${index}`} title={section.name}>
-                    <p className="whitespace-pre-line">{section.content}</p>
+                    <ul className="list-disc space-y-1 pl-5">
+                      {toBullets(section.content, 6).map((bullet, bulletIndex) => (
+                        <li key={`${section.name}-${bulletIndex}`}>{bullet}</li>
+                      ))}
+                    </ul>
                   </MainSection>
                 ))
               : null}

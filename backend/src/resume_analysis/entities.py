@@ -44,13 +44,27 @@ def extract_entities(text: str, sections: dict[str, str], doc: object | None = N
         for title in JOB_TITLE_HINTS:
             if title in lowered:
                 entities["job_titles"].append(title.title())
-        if any(hint in lowered for hint in CERTIFICATION_HINTS):
+        if _looks_like_certification_line(line):
             entities["certifications"].append(line.strip())
 
-    sections_text = "\n".join(sections.values()).lower()
-    for certification in CERTIFICATION_HINTS:
-        if certification in sections_text:
-            entities["certifications"].append(certification.title())
+    certification_sections = "\n".join(
+        str(sections.get(name) or "")
+        for name in ("certifications", "courses", "training", "programs", "achievements")
+    )
+    achievement_sections = "\n".join(
+        str(sections.get(name) or "")
+        for name in ("achievements", "activities", "hackathons", "participation")
+    )
+    for line in certification_sections.splitlines():
+        cleaned = line.strip()
+        if _looks_like_certification_line(cleaned):
+            entities["certifications"].append(cleaned)
+
+    for line in achievement_sections.splitlines():
+        cleaned = line.strip()
+        lowered = cleaned.lower()
+        if cleaned and any(token in lowered for token in ("hackathon", "competition", "participated", "winner", "finalist", "ranked")):
+            entities["organizations"].append(cleaned)
 
     return {key: _dedupe(values) for key, values in entities.items()}
 
@@ -79,3 +93,19 @@ def _dedupe(values: list[str]) -> list[str]:
         seen.add(key)
         output.append(clean)
     return output
+
+
+def _looks_like_certification_line(line: str) -> bool:
+    cleaned = str(line or "").strip()
+    lowered = cleaned.lower()
+    if not cleaned:
+        return False
+    if "certifications and achievements" in lowered or cleaned.isupper():
+        return False
+    if "@" in lowered or "linkedin" in lowered or "github" in lowered:
+        return False
+    certification_tokens = (
+        "certification", "certifications", "certified", "course", "courses", "training",
+        "bootcamp", "workshop", "program", "completed mlops", "nxtwave",
+    )
+    return any(token in lowered for token in certification_tokens)

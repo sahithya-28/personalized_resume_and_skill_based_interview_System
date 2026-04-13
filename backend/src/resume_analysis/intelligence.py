@@ -4,7 +4,6 @@ import math
 import re
 from functools import lru_cache
 
-from .ml_models import classify_candidate_type
 from .semantic_utils import rank_similarity
 from .skill_catalog import IDEAL_PROFILE_TEXT, JOB_TITLE_HINTS, SKILL_TAXONOMY
 
@@ -22,8 +21,72 @@ COMPLEXITY_COMPONENTS: dict[str, list[str]] = {
 ROLE_PROFILE_HINTS: dict[str, list[str]] = {
     "Backend Developer": ["rest api", "spring boot", "fastapi", "sql", "microservices", "backend"],
     "Data Scientist": ["machine learning", "pandas", "sklearn", "tensorflow", "statistics", "nlp"],
+    "Machine Learning Engineer": ["tensorflow", "pytorch", "mlops", "model deployment", "feature engineering", "machine learning"],
+    "AI Engineer": ["llm", "generative ai", "rag", "nlp", "ai agent", "prompt engineering"],
     "Frontend Developer": ["react", "javascript", "typescript", "css", "frontend", "ui"],
     "DevOps Engineer": ["docker", "kubernetes", "aws", "terraform", "jenkins", "linux"],
+}
+
+ROLE_SCORING_RULES: dict[str, dict[str, list[str] | float]] = {
+    "Data Scientist": {
+        "skills": ["python", "machine learning", "data analysis", "pandas", "numpy", "statistics", "sklearn", "tensorflow", "pytorch"],
+        "projects": ["machine learning", "model", "prediction", "classification", "analytics", "data", "visualization"],
+        "summary": ["data scientist", "data analysis", "machine learning", "statistics", "nlp"],
+        "experience": ["data scientist", "data analyst", "ml engineer", "research"],
+    },
+    "Machine Learning Engineer": {
+        "skills": ["python", "machine learning", "tensorflow", "pytorch", "keras", "mlops", "feature engineering", "model deployment", "fastapi", "flask"],
+        "projects": ["model", "deployment", "mlops", "training", "inference", "pipeline", "feature engineering", "tensorflow", "pytorch"],
+        "summary": ["machine learning engineer", "ml engineer", "model deployment", "mlops", "training pipeline"],
+        "experience": ["machine learning engineer", "ml engineer", "ai engineer", "data scientist"],
+    },
+    "AI Engineer": {
+        "skills": ["python", "nlp", "deep learning", "transformers", "llm", "generative ai", "rag", "prompt engineering", "tensorflow", "pytorch"],
+        "projects": ["llm", "generative ai", "nlp", "chatbot", "transformer", "rag", "agent", "deep learning"],
+        "summary": ["ai engineer", "generative ai", "llm", "nlp", "artificial intelligence"],
+        "experience": ["ai engineer", "ml engineer", "nlp engineer", "research engineer"],
+    },
+    "Backend Developer": {
+        "skills": ["java", "spring boot", "node.js", "api", "apis", "database", "sql", "mysql", "postgresql", "system design", "backend", "flask", "fastapi", "django"],
+        "projects": ["spring boot", "rest api", "backend", "authentication", "database", "system", "microservices"],
+        "summary": ["backend developer", "backend", "api", "server-side", "databases"],
+        "experience": ["backend developer", "software engineer", "java developer", "api developer"],
+    },
+    "Frontend Developer": {
+        "skills": ["html", "css", "javascript", "react", "typescript", "ui", "ux", "frontend", "angular", "vue"],
+        "projects": ["frontend", "ui", "responsive", "component", "react", "javascript", "css", "website"],
+        "summary": ["frontend developer", "frontend", "ui", "ux", "responsive design"],
+        "experience": ["frontend developer", "ui developer", "react developer", "web developer"],
+    },
+    "DevOps Engineer": {
+        "skills": ["docker", "kubernetes", "ci/cd", "aws", "linux", "terraform", "jenkins", "cloud", "deployment", "monitoring"],
+        "projects": ["docker", "kubernetes", "pipeline", "deployment", "cloud", "infrastructure", "automation"],
+        "summary": ["devops engineer", "cloud", "infrastructure", "automation", "deployment"],
+        "experience": ["devops engineer", "site reliability", "platform engineer", "cloud engineer"],
+    },
+}
+
+STRICT_DEVOPS_TOOLS = {
+    "docker",
+    "kubernetes",
+    "ci/cd",
+    "aws",
+    "linux",
+    "terraform",
+    "jenkins",
+}
+
+STRONG_DATA_SCIENCE_PROJECT_TERMS = {
+    "machine learning",
+    "deep learning",
+    "lstm",
+    "tensorflow",
+    "keras",
+    "pandas",
+    "numpy",
+    "data analysis",
+    "prediction",
+    "classification",
 }
 
 
@@ -262,24 +325,110 @@ def compare_resume_to_profiles(text: str) -> list[dict]:
     return normalized
 
 
+def score_resume_roles(
+    *,
+    sections: dict[str, str],
+    skills: list[str],
+    projects: list[dict],
+    summary_text: str,
+    timeline: dict,
+) -> dict:
+    normalized_skills = {str(skill or "").strip().lower() for skill in skills if str(skill or "").strip()}
+    normalized_skills_blob = " ".join(sorted(normalized_skills))
+    project_blob = " ".join(
+        f"{project.get('project_name', '')} {project.get('description', '')} {' '.join(project.get('technologies', []))}"
+        for project in projects
+    ).lower()
+    summary_blob = str(summary_text or sections.get("summary") or "").lower()
+    experience_blob = str(sections.get("experience") or "").lower()
+    internship_blob = str(sections.get("internships") or "").lower()
+    combined_experience_blob = f"{experience_blob} {internship_blob}".strip()
+    devops_evidence_present = any(tool in normalized_skills_blob for tool in STRICT_DEVOPS_TOOLS) or any(
+        tool in project_blob or tool in combined_experience_blob for tool in STRICT_DEVOPS_TOOLS
+    )
+    strong_data_science_project_signal = any(term in project_blob for term in STRONG_DATA_SCIENCE_PROJECT_TERMS)
+
+    raw_scores: dict[str, float] = {}
+    for role, rules in ROLE_SCORING_RULES.items():
+        score = 0.0
+
+        for keyword in rules["skills"]:
+            if keyword in normalized_skills or any(keyword in skill for skill in normalized_skills):
+                score += 8.0
+
+        for keyword in rules["projects"]:
+            if keyword in project_blob:
+                score += 14.0
+
+        for keyword in rules["summary"]:
+            if keyword in summary_blob:
+                score += 4.0
+
+        for keyword in rules["experience"]:
+            if keyword in combined_experience_blob:
+                score += 14.0
+
+        if role == "Backend Developer" and any(word in experience_blob for word in ("api", "backend", "spring", "database")):
+            score += 8.0
+        if role == "Frontend Developer" and any(word in project_blob for word in ("ui", "frontend", "react", "css")):
+            score += 8.0
+        if role == "Data Scientist" and any(word in project_blob for word in ("analysis", "model", "prediction", "dataset")):
+            score += 8.0
+        if role == "Machine Learning Engineer" and any(word in project_blob for word in ("deployment", "pipeline", "training", "inference", "model")):
+            score += 10.0
+        if role == "AI Engineer" and any(word in project_blob for word in ("nlp", "llm", "generative ai", "transformer", "agent", "rag")):
+            score += 12.0
+        if role == "DevOps Engineer" and any(word in project_blob for word in ("docker", "deployment", "cloud", "pipeline")):
+            score += 8.0
+        if role == "Data Scientist" and strong_data_science_project_signal:
+            score += 22.0
+        if role == "Machine Learning Engineer" and strong_data_science_project_signal:
+            score += 16.0
+        if role == "Backend Developer" and any(word in project_blob for word in ("flask", "express", "rest api", "database", "mysql", "postgresql")):
+            score += 12.0
+        if role == "DevOps Engineer" and not devops_evidence_present:
+            score = min(score, 8.0)
+        if role == "DevOps Engineer" and devops_evidence_present:
+            score += 18.0
+
+        raw_scores[role] = score
+
+    max_score = max(raw_scores.values()) if raw_scores else 0.0
+    normalized_scores: dict[str, int] = {}
+    for role, score in raw_scores.items():
+        baseline = 12 if score > 0 else 0
+        normalized = round((score / max_score) * 88 + baseline) if max_score > 0 else 0
+        normalized_scores[role] = int(max(0, min(100, normalized)))
+
+    ranked = sorted(normalized_scores.items(), key=lambda item: (-item[1], item[0]))
+    if ranked:
+        leader_role, leader_score = ranked[0]
+        normalized_scores[leader_role] = max(leader_score, min(100, leader_score + 3))
+
+    role_scores = [{"profile": role, "score": score} for role, score in sorted(normalized_scores.items(), key=lambda item: (-item[1], item[0]))]
+    return {
+        "predicted_profile": role_scores[0]["profile"] if role_scores else "Backend Developer",
+        "confidence": role_scores[0]["score"] if role_scores else 0,
+        "scores": role_scores,
+        "method": "content_weighted_scoring",
+    }
+
+
 def predict_candidate_type(text: str, sections: dict[str, str], timeline: dict) -> dict:
-    base_prediction = classify_candidate_type(text)
     experience_years = timeline.get("total_years_experience", 0.0)
     has_experience = bool((sections.get("experience") or "").strip())
-    fresher_score = 0.0
-    experienced_score = 0.0
-    for item in base_prediction.get("scores", []):
-        if item["category"] == "Fresher":
-            fresher_score = item["probability"]
-        if item["category"] == "Experienced":
-            experienced_score = item["probability"]
+    internship_only = "intern" in (sections.get("experience") or "").lower() and experience_years < 1.0
 
-    if experience_years >= 2 or has_experience:
-        experienced_score = min(0.95, experienced_score + 0.18)
-        fresher_score = max(0.05, 1.0 - experienced_score)
-    elif not has_experience and experience_years == 0:
-        fresher_score = min(0.95, fresher_score + 0.15)
-        experienced_score = max(0.05, 1.0 - fresher_score)
+    experienced_score = 0.15
+    if has_experience:
+        experienced_score += 0.25
+    experienced_score += min(0.55, experience_years * 0.18)
+    if internship_only:
+        experienced_score -= 0.2
+
+    experienced_score = max(0.05, min(0.95, experienced_score))
+    fresher_score = round(max(0.05, min(0.95, 1.0 - experienced_score)), 4)
+    experienced_score = round(max(0.05, min(0.95, experienced_score)), 4)
 
     scores = sorted(
         [
@@ -294,6 +443,7 @@ def predict_candidate_type(text: str, sections: dict[str, str], timeline: dict) 
         "confidence": scores[0]["probability"],
         "scores": scores,
         "user_override_allowed": True,
+        "method": "timeline_weighted_scoring",
     }
 
 

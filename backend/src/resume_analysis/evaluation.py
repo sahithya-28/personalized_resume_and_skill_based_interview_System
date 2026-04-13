@@ -305,11 +305,17 @@ def generate_improvement_suggestions(
     adaptive_analysis: dict | None = None,
     jd_match_score: float = 0.0,
     jd_missing_skills: list[str] | None = None,
+    predicted_role: str = "",
+    sections: dict[str, str] | None = None,
+    certifications: list[str] | None = None,
 ) -> list[str]:
     score_breakdown = score_breakdown or {}
     project_analysis = project_analysis or []
     adaptive_analysis = adaptive_analysis or {}
     jd_missing_skills = jd_missing_skills or []
+    sections = sections or {}
+    certifications = certifications or []
+    predicted_role = str(predicted_role or "").strip()
 
     ranked: list[tuple[int, str]] = []
     ranked.extend((12, item) for item in contact_validation["suggestions"])
@@ -350,6 +356,45 @@ def generate_improvement_suggestions(
         ranked.append((66, "For fresher profiles, highlight projects, internships, certifications, and relevant coursework more explicitly."))
     elif adaptive_analysis.get("predicted_candidate_type") == "Experienced":
         ranked.append((66, "For experienced profiles, emphasize leadership scope, architecture decisions, and business impact."))
+
+    project_blob = " ".join(
+        f"{project.get('project_name', '')} {project.get('description', '')} {' '.join(project.get('technologies', []))}"
+        for project in project_analysis
+    ).lower()
+    experience_blob = str(sections.get("experience") or "").lower()
+    summary_blob = str(sections.get("summary") or "").lower()
+    evidence_locations = {
+        skill.lower(): set(item.get("locations", []))
+        for skill, item in evidence.items()
+    }
+
+    if predicted_role == "Data Scientist":
+        if not any(token in project_blob for token in ("accuracy", "precision", "recall", "f1", "rmse", "mae")):
+            ranked.append((99, "Add model evaluation metrics such as accuracy, F1-score, RMSE, or precision-recall to your data science project bullets."))
+        if not any(token in project_blob + " " + experience_blob for token in ("flask", "fastapi", "deployment", "api")):
+            ranked.append((94, "Show production readiness by adding deployment work, such as serving an ML model through a Flask or FastAPI endpoint."))
+    elif predicted_role == "Backend Developer":
+        if not any(token in project_blob + " " + experience_blob for token in ("authentication", "jwt", "oauth", "authorization")):
+            ranked.append((94, "Strengthen backend relevance by adding authentication, authorization, or secure API design details in your projects."))
+        if not any(token in project_blob + " " + experience_blob for token in ("docker", "deploy", "cloud", "aws")):
+            ranked.append((88, "Add one production-style backend project detail covering deployment, hosting, or containerization."))
+    elif predicted_role == "Frontend Developer":
+        if not any(token in project_blob + " " + summary_blob for token in ("responsive", "accessibility", "ui", "ux", "figma")):
+            ranked.append((94, "Add frontend impact details such as responsive design, accessibility improvements, or UI/UX decisions."))
+        if not achievements.get("has_quantified_results"):
+            ranked.append((90, "Include measurable frontend outcomes like improved load time, engagement, accessibility score, or conversion rate."))
+    elif predicted_role == "DevOps Engineer":
+        if not any(token in project_blob + " " + experience_blob for token in ("docker", "kubernetes", "ci/cd", "jenkins", "terraform", "aws", "linux")):
+            ranked.append((99, "Add hands-on infrastructure work such as Docker, Kubernetes, CI/CD, AWS, or Linux administration to justify a DevOps profile."))
+
+    if not str(sections.get("experience") or "").strip():
+        ranked.append((92, "Add internships, freelance work, or production-style projects to show real-world experience beyond coursework."))
+
+    if certifications:
+        if predicted_role == "Data Scientist" and not any("machine" in cert.lower() or "data" in cert.lower() for cert in certifications):
+            ranked.append((72, "Add role-aligned certifications such as machine learning, data analysis, or statistics courses to strengthen your target profile."))
+        if predicted_role == "Backend Developer" and not any(token in cert.lower() for cert in certifications for token in ("java", "api", "cloud", "backend")):
+            ranked.append((70, "Add backend-aligned certifications or programs in Java, APIs, cloud, or databases if you have completed them."))
 
     deduped: list[str] = []
     seen = set()

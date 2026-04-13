@@ -1,0 +1,145 @@
+[
+  {
+    "id": "GIT_B1",
+    "level": "Beginner",
+    "question": "What is Git and why is it used?",
+    "keywords": ["git", "version control", "distributed", "code management", "history"],
+    "marks": 3
+  },
+  {
+    "id": "GIT_B2",
+    "level": "Beginner",
+    "question": "What is a repository in Git?",
+    "keywords": ["repository", "git folder", "version history", "working tree"],
+    "marks": 3
+  },
+  {
+    "id": "GIT_B3",
+    "level": "Beginner",
+    "question": "What is a commit in Git?",
+    "keywords": ["commit", "snapshot", "version", "changes", "history"],
+    "marks": 3
+  },
+  {
+    "id": "GIT_B4",
+    "level": "Beginner",
+    "question": "What is the difference between Git and GitHub?",
+    "keywords": ["git", "github", "local", "remote", "hosting", "collaboration"],
+    "marks": 3
+  },
+  {
+    "id": "GIT_B5",
+    "level": "Beginner",
+    "question": "What does the git add command do?",
+    "keywords": ["git add", "staging area", "prepare commit", "tracking"],
+    "marks": 3
+  },
+
+  {
+    "id": "GIT_D1",
+    "level": "Depth",
+    "question": "Explain the difference between working directory, staging area, and repository.",
+    "keywords": ["working directory", "staging area", "repository", "three tree architecture"],
+    "marks": 5
+  },
+  {
+    "id": "GIT_D2",
+    "level": "Depth",
+    "question": "How does Git differ from traditional version control systems?",
+    "keywords": ["distributed", "centralized", "performance", "branching", "data integrity"],
+    "marks": 5
+  },
+  {
+    "id": "GIT_D3",
+    "level": "Depth",
+    "question": "Explain branching and merging in Git.",
+    "keywords": ["branch", "merge", "feature branch", "conflict resolution"],
+    "marks": 5
+  },
+  {
+    "id": "GIT_D4",
+    "level": "Depth",
+    "question": "What is HEAD in Git and how does it work?",
+    "keywords": ["head", "pointer", "latest commit", "reference"],
+    "marks": 5
+  },
+  {
+    "id": "GIT_D5",
+    "level": "Depth",
+    "question": "Explain how Git stores data internally.",
+    "keywords": ["blob", "tree", "commit object", "sha-1", "immutable storage"],
+    "marks": 5
+  },
+
+  {
+    "id": "GIT_T1",
+    "level": "Trap",
+    "question": "Does git add commit the changes to the repository?",
+    "keywords": ["git add vs commit", "staging only", "misconception"],
+    "marks": 5
+  },
+  {
+    "id": "GIT_T2",
+    "level": "Trap",
+    "question": "Is GitHub required to use Git?",
+    "keywords": ["git vs github", "local repository", "independence"],
+    "marks": 5
+  },
+  {
+    "id": "GIT_T3",
+    "level": "Trap",
+    "question": "If a central server fails, will Git lose all data?",
+    "keywords": ["distributed system", "backup", "local repositories"],
+    "marks": 5
+  },
+  {
+    "id": "GIT_T4",
+    "level": "Trap",
+    "question": "Is a commit just a list of changed files?",
+    "keywords": ["snapshot", "complete state", "misconception"],
+    "marks": 5
+  },
+  {
+    "id": "GIT_T5",
+    "level": "Trap",
+    "question": "Does git clone only download the latest version of the code?",
+    "keywords": ["full history", "clone", "repository copy"],
+    "marks": 5
+  },
+
+  {
+    "id": "GIT_S1",
+    "level": "Scenario",
+    "question": "You accidentally committed sensitive data. How would you handle it?",
+    "keywords": ["git reset", "git revert", "history rewrite", "security"],
+    "marks": 6
+  },
+  {
+    "id": "GIT_S2",
+    "level": "Scenario",
+    "question": "How would you resolve a merge conflict between two branches?",
+    "keywords": ["merge conflict", "manual resolution", "git merge", "conflict markers"],
+    "marks": 6
+  },
+  {
+    "id": "GIT_S3",
+    "level": "Scenario",
+    "question": "You want to work on a new feature without affecting the main codebase. What would you do?",
+    "keywords": ["branching", "feature branch", "isolation"],
+    "marks": 6
+  },
+  {
+    "id": "GIT_S4",
+    "level": "Scenario",
+    "question": "How would you initialize a project and push it to a remote repository?",
+    "keywords": ["git init", "git add", "git commit", "git remote", "git push"],
+    "marks": 6
+  },
+  {
+    "id": "GIT_S5",
+    "level": "Scenario",
+    "question": "Your git status shows untracked and modified files. What steps would you take before committing?",
+    "keywords": ["git status", "staging", "review changes", "git add"],
+    "marks": 6
+  }
+]

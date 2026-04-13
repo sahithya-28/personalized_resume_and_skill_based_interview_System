@@ -11,6 +11,7 @@ if str(ROOT_DIR) not in sys.path:
     sys.path.append(str(ROOT_DIR))
 
 from backend.src.resume_analysis import build_advanced_resume_report
+from backend.src.resume_analysis.normalizer import normalize_resume_schema
 from backend.src.resume_parser.text_extractor import extract_text_from_pdf
 from backend.src.vulnerability_engine.gap_detector import detect_year_gaps
 from backend.src.vulnerability_engine.vulnerability_rules import detect_vulnerabilities
@@ -69,6 +70,7 @@ def calculate_ats_score(text: str, job_description: str | None = None) -> int:
 
 def analyze_resume_text(text: str, job_description: str | None = None) -> dict:
     advanced = build_advanced_resume_report(text, job_description=job_description)
+    ats_scorecard = calculate_ats_scorecard(text, job_description=job_description)
 
     parsed_data = advanced.get("parsed_data", {})
     sections = parsed_data.get("sections", {})
@@ -81,13 +83,26 @@ def analyze_resume_text(text: str, job_description: str | None = None) -> dict:
     score_breakdown = resume_score.get("breakdown", {})
     completeness = advanced.get("section_completeness", {}).get("required", {})
     evidence = advanced.get("skill_verification", {})
+    role_prediction = advanced.get("resume_profile_classification", {})
+    candidate_type = advanced.get("candidate_type_prediction", {})
     strong_or_moderate = sum(
         1 for item in evidence.values() if item.get("status") in {"Strong Evidence", "Moderate Evidence"}
     )
+    normalized_resume = normalize_resume_schema(
+        parsed_data=parsed_data,
+        sections=sections,
+        structured_sections=structured_sections,
+        skills=skills,
+        project_analysis=advanced.get("project_analysis", []),
+        raw_text=advanced.get("preprocessing", {}).get("cleaned_text", text),
+    )
 
     return {
-        "overall_score": int(resume_score.get("total", 0)),
-        "breakdown": resume_score.get("weighted_breakdown", {}),
+        "overall_score": int(ats_scorecard.get("ats_score", 0)),
+        "analysis_score": int(resume_score.get("total", 0)),
+        "ats_score": int(ats_scorecard.get("ats_score", 0)),
+        "ats_breakdown": ats_scorecard.get("breakdown", {}),
+        "breakdown": ats_scorecard.get("breakdown", {}),
         "category_scores": {
             "education": 100 if completeness.get("education") else 0,
             "skills": min(100, strong_or_moderate * 10 + (20 if skills else 0)),
@@ -97,6 +112,14 @@ def analyze_resume_text(text: str, job_description: str | None = None) -> dict:
         "skills": skills,
         "sections": sections,
         "structured_sections": structured_sections,
+        "normalized_resume": normalized_resume,
+        "predicted_role": role_prediction.get("predicted_profile", ""),
+        "experience_level": candidate_type.get("predicted_category", ""),
+        "role_scores": {
+            item.get("profile", ""): item.get("score", 0)
+            for item in role_prediction.get("scores", [])
+            if item.get("profile")
+        },
         "suggestions": advanced.get("improvement_suggestions", []),
         "vulnerabilities": vulnerabilities,
         **advanced,

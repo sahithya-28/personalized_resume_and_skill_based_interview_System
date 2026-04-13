@@ -1,11 +1,10 @@
 import { Link } from 'react-router-dom';
-import { Upload, CheckCircle2, AlertTriangle, Target, MessageSquare, Star } from 'lucide-react';
+import { Upload, CheckCircle2, Target, MessageSquare, Star } from 'lucide-react';
 
 export default function CompanyPrepPage() {
   const steps = [
     { icon: Upload, title: 'Upload Resume', description: 'Submit your resume for analysis', link: '/resume-upload', color: 'indigo' },
     { icon: CheckCircle2, title: 'Resume Score', description: 'Get detailed scoring and evaluation', link: '/resume-score', color: 'green' },
-    { icon: AlertTriangle, title: 'Vulnerabilities', description: 'Identify weak points and gaps', link: '/vulnerabilities', color: 'amber' },
     { icon: Target, title: 'Skill Verification', description: 'Validate claimed skills with tests', link: '/skill-verification', color: 'purple' },
     { icon: MessageSquare, title: 'Interview Questions', description: 'Practice company-specific questions', link: '/interview-questions?type=company', color: 'sky' },
     { icon: Star, title: 'Feedback', description: 'Receive comprehensive evaluation', link: '/feedback', color: 'pink' }
@@ -14,7 +13,6 @@ export default function CompanyPrepPage() {
   const colors = {
     indigo: { bg: 'bg-indigo-100', text: 'text-indigo-600', border: 'border-indigo-200' },
     green: { bg: 'bg-green-100', text: 'text-green-600', border: 'border-green-200' },
-    amber: { bg: 'bg-amber-100', text: 'text-amber-600', border: 'border-amber-200' },
     purple: { bg: 'bg-purple-100', text: 'text-purple-600', border: 'border-purple-200' },
     sky: { bg: 'bg-sky-100', text: 'text-sky-600', border: 'border-sky-200' },
     pink: { bg: 'bg-pink-100', text: 'text-pink-600', border: 'border-pink-200' }
@@ -27,7 +25,7 @@ export default function CompanyPrepPage() {
           Company Preparation Flow
         </h1>
         <p className="text-gray-600 text-center mb-12 max-w-2xl mx-auto">
-          Complete resume-based company-specific interview preparation in 6 steps
+          Complete resume-based company-specific interview preparation in 5 steps
         </p>
 
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -65,7 +63,7 @@ export default function CompanyPrepPage() {
             <div className="flex-1 bg-gray-200 rounded-full h-3 overflow-hidden">
               <div className="bg-indigo-600 h-full rounded-full" style={{ width: '0%' }}></div>
             </div>
-            <span className="text-sm font-semibold text-gray-600">0/6 Complete</span>
+            <span className="text-sm font-semibold text-gray-600">0/5 Complete</span>
           </div>
         </div>
       </div>

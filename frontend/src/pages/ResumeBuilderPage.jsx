@@ -308,10 +308,21 @@ export default function ResumeBuilderPage() {
                   <p className="text-sm text-slate-600">No matching sections were detected yet.</p>
                 )}
               </div>
-              {resumeData.rawText ? (
+              {Array.isArray(resumeData.sectionMapping) && resumeData.sectionMapping.length ? (
                 <div className="mt-4 rounded-xl border border-blue-100 bg-white/80 p-3">
-                  <p className="text-xs font-semibold uppercase tracking-[0.14em] text-slate-500">Extracted Text Preview</p>
-                  <p className="mt-2 line-clamp-4 whitespace-pre-line text-sm text-slate-700">{resumeData.rawText}</p>
+                  <p className="text-xs font-semibold uppercase tracking-[0.14em] text-slate-500">Section Mapping Confidence</p>
+                  <div className="mt-2 space-y-2">
+                    {resumeData.sectionMapping.map((item, index) => (
+                      <div key={`${item.source}-${index}`} className="flex flex-wrap items-center gap-2 text-sm text-slate-700">
+                        <span className="font-medium">{item.source}</span>
+                        <span className="text-slate-400">→</span>
+                        <span>{getSectionDisplayName(item.target === 'experience' ? 'workExperience' : item.target)}</span>
+                        <span className="rounded-full bg-slate-100 px-2 py-0.5 text-xs text-slate-600">
+                          {Math.round(Number(item.confidence || 0) * 100)}%
+                        </span>
+                      </div>
+                    ))}
+                  </div>
                 </div>
               ) : null}
             </div>

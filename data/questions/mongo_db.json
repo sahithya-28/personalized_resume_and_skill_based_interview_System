@@ -1,0 +1,145 @@
+[
+  {
+    "id": "DB_B1",
+    "level": "Beginner",
+    "question": "What is a SQL database?",
+    "keywords": ["sql", "relational database", "tables", "rows", "columns", "structured data"],
+    "marks": 3
+  },
+  {
+    "id": "DB_B2",
+    "level": "Beginner",
+    "question": "What is a NoSQL database?",
+    "keywords": ["nosql", "non relational", "document", "key value", "graph", "flexible schema"],
+    "marks": 3
+  },
+  {
+    "id": "DB_B3",
+    "level": "Beginner",
+    "question": "What is MongoDB and what type of database is it?",
+    "keywords": ["mongodb", "document database", "nosql", "json", "flexible schema"],
+    "marks": 3
+  },
+  {
+    "id": "DB_B4",
+    "level": "Beginner",
+    "question": "What is indexing in MongoDB?",
+    "keywords": ["indexing", "performance", "search optimization", "b tree"],
+    "marks": 3
+  },
+  {
+    "id": "DB_B5",
+    "level": "Beginner",
+    "question": "What is an aggregation query?",
+    "keywords": ["aggregation", "grouping", "sum", "average", "data processing"],
+    "marks": 3
+  },
+
+  {
+    "id": "DB_D1",
+    "level": "Depth",
+    "question": "Explain the difference between SQL and NoSQL databases.",
+    "keywords": ["schema", "acid", "cap theorem", "scalability", "relational vs non relational"],
+    "marks": 5
+  },
+  {
+    "id": "DB_D2",
+    "level": "Depth",
+    "question": "Explain the aggregation pipeline in MongoDB.",
+    "keywords": ["pipeline", "stages", "group", "match", "data transformation"],
+    "marks": 5
+  },
+  {
+    "id": "DB_D3",
+    "level": "Depth",
+    "question": "How does indexing improve performance in MongoDB? What are its trade-offs?",
+    "keywords": ["indexing", "query performance", "write overhead", "memory usage"],
+    "marks": 5
+  },
+  {
+    "id": "DB_D4",
+    "level": "Depth",
+    "question": "Explain replica sets in MongoDB and their importance.",
+    "keywords": ["replica set", "high availability", "redundancy", "failover"],
+    "marks": 5
+  },
+  {
+    "id": "DB_D5",
+    "level": "Depth",
+    "question": "Explain the structure of ObjectId in MongoDB.",
+    "keywords": ["objectid", "timestamp", "random value", "counter", "unique identifier"],
+    "marks": 5
+  },
+
+  {
+    "id": "DB_T1",
+    "level": "Trap",
+    "question": "If indexes improve read performance, should we create indexes on every field?",
+    "keywords": ["index tradeoff", "write slowdown", "memory overhead", "optimization"],
+    "marks": 5
+  },
+  {
+    "id": "DB_T2",
+    "level": "Trap",
+    "question": "Is MongoDB always better than SQL databases for scalability?",
+    "keywords": ["use case", "scalability", "horizontal vs vertical", "tradeoffs"],
+    "marks": 5
+  },
+  {
+    "id": "DB_T3",
+    "level": "Trap",
+    "question": "Does MongoDB support joins like SQL? If yes, how are they different?",
+    "keywords": ["lookup", "join", "aggregation", "limitations"],
+    "marks": 5
+  },
+  {
+    "id": "DB_T4",
+    "level": "Trap",
+    "question": "Are NoSQL databases incapable of handling complex queries?",
+    "keywords": ["complex queries", "limitations", "aggregation", "design tradeoffs"],
+    "marks": 5
+  },
+  {
+    "id": "DB_T5",
+    "level": "Trap",
+    "question": "Is embedding always better than referencing in MongoDB?",
+    "keywords": ["embedding", "referencing", "data modeling", "performance tradeoff"],
+    "marks": 5
+  },
+
+  {
+    "id": "DB_S1",
+    "level": "Scenario",
+    "question": "You need to design a system with millions of users and high read/write traffic. Would you choose SQL or MongoDB and why?",
+    "keywords": ["scalability", "mongodb", "distributed system", "high traffic"],
+    "marks": 6
+  },
+  {
+    "id": "DB_S2",
+    "level": "Scenario",
+    "question": "Your MongoDB queries are slow. How would you optimize performance?",
+    "keywords": ["indexing", "query optimization", "sharding", "performance tuning"],
+    "marks": 6
+  },
+  {
+    "id": "DB_S3",
+    "level": "Scenario",
+    "question": "Design a schema for a one-to-many relationship in MongoDB.",
+    "keywords": ["one to many", "embedding", "referencing", "schema design"],
+    "marks": 6
+  },
+  {
+    "id": "DB_S4",
+    "level": "Scenario",
+    "question": "How would you implement pagination in MongoDB for a large dataset?",
+    "keywords": ["pagination", "skip", "limit", "performance"],
+    "marks": 6
+  },
+  {
+    "id": "DB_S5",
+    "level": "Scenario",
+    "question": "You need to join two collections in MongoDB. How would you approach this?",
+    "keywords": ["lookup", "aggregation", "join simulation", "data modeling"],
+    "marks": 6
+  }
+]

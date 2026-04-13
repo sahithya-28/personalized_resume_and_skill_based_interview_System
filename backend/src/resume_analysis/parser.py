@@ -10,8 +10,16 @@ HEADER_HINTS = {
     "skills": ["skills", "technical skills", "technologies", "tools"],
     "projects": ["projects", "project experience", "academic projects"],
     "experience": ["experience", "work experience", "employment", "internship", "internships"],
-    "certifications": ["certifications", "licenses", "credentials"],
-    "achievements": ["achievements", "awards", "accomplishments"],
+    "certifications": [
+        "certifications", "licenses", "credentials", "certificates", "courses", "training",
+        "programs", "certifications and achievements", "achievements and certifications",
+        "certifications & achievements", "achievements & certifications",
+    ],
+    "achievements": [
+        "achievements", "awards", "accomplishments", "activities", "hackathons", "participation",
+        "certifications and achievements", "achievements and certifications",
+        "certifications & achievements", "achievements & certifications",
+    ],
     "summary": ["summary", "objective", "profile"],
 }
 
@@ -48,14 +56,38 @@ def extract_contact_info(text: str) -> dict[str, str]:
 
 def split_resume_blocks(text: str) -> list[str]:
     blocks = [part.strip() for part in re.split(r"\n\s*\n", text) if part.strip()]
-    if blocks:
+    if len(blocks) > 1:
         return blocks
-    return [line.strip() for line in text.splitlines() if line.strip()]
+
+    lines = [line.rstrip() for line in text.splitlines() if line.strip()]
+    if not lines:
+        return []
+
+    grouped: list[str] = []
+    current: list[str] = []
+    for line in lines:
+        stripped = line.strip()
+        if _match_header_line(stripped):
+            if current:
+                grouped.append("\n".join(current).strip())
+            current = [stripped]
+            continue
+        if not current:
+            current = [stripped]
+        else:
+            current.append(stripped)
+
+    if current:
+        grouped.append("\n".join(current).strip())
+
+    return grouped or [line.strip() for line in lines]
 
 
 def build_sections(blocks: list[str], predictions: list[dict]) -> dict[str, str]:
     sections = {name: "" for name in HEADER_HINTS}
     for block, item in zip(blocks, predictions):
+        if _is_contact_block(block) and not _has_explicit_header(block.splitlines()):
+            continue
         section = _override_from_header(block, item["label"])
         current = sections.get(section, "")
         sections[section] = f"{current}\n{block}".strip()
@@ -68,6 +100,8 @@ def build_structured_sections(blocks: list[str], predictions: list[dict]) -> lis
     for block, item in zip(blocks, predictions):
         lines = [line.strip() for line in block.splitlines() if line.strip()]
         if not lines:
+            continue
+        if _is_contact_block(block) and not _has_explicit_header(lines):
             continue
 
         section_key = _override_from_header(block, item["label"])
@@ -93,17 +127,17 @@ def build_structured_sections(blocks: list[str], predictions: list[dict]) -> lis
 
 def _override_from_header(block: str, predicted_label: str) -> str:
     first_line = block.splitlines()[0].strip().lower()
-    normalized = re.sub(r"[:\-\s]+$", "", first_line)
+    normalized = _normalize_header(first_line)
     for section, headers in HEADER_HINTS.items():
-        if normalized in headers:
+        if normalized in {_normalize_header(header) for header in headers}:
             return section
     return predicted_label
 
 
 def _extract_section_title(lines: list[str], section_key: str) -> str:
     first_line = lines[0].strip()
-    normalized = re.sub(r"[:\-\s]+$", "", first_line.lower())
-    if normalized in {item for values in HEADER_HINTS.values() for item in values}:
+    normalized = _normalize_header(first_line.lower())
+    if normalized in {_normalize_header(item) for values in HEADER_HINTS.values() for item in values}:
         return re.sub(r"[:\-\s]+$", "", first_line).strip() or section_key.title()
     return section_key.title()
 
@@ -111,8 +145,8 @@ def _extract_section_title(lines: list[str], section_key: str) -> str:
 def _extract_section_content(lines: list[str], title: str) -> list[str]:
     if not lines:
         return []
-    normalized_title = re.sub(r"[:\-\s]+$", "", title.lower())
-    first_line_normalized = re.sub(r"[:\-\s]+$", "", lines[0].strip().lower())
+    normalized_title = _normalize_header(title.lower())
+    first_line_normalized = _normalize_header(lines[0].strip().lower())
     if first_line_normalized == normalized_title and len(lines) > 1:
         return lines[1:]
     return lines
@@ -121,11 +155,25 @@ def _extract_section_content(lines: list[str], title: str) -> list[str]:
 def _has_explicit_header(lines: list[str]) -> bool:
     if not lines:
         return False
-    first_line = re.sub(r"[:\-\s]+$", "", lines[0].strip().lower())
+    first_line = _normalize_header(lines[0].strip().lower())
     for headers in HEADER_HINTS.values():
-        if first_line in headers:
+        if first_line in {_normalize_header(header) for header in headers}:
             return True
     return False
+
+
+def _match_header_line(line: str) -> bool:
+    normalized = _normalize_header(str(line or "").lower())
+    if not normalized:
+        return False
+    alias_set = {_normalize_header(item) for values in HEADER_HINTS.values() for item in values}
+    return normalized in alias_set
+
+
+def _is_contact_block(block: str) -> bool:
+    lowered = str(block or "").lower()
+    contact_signals = ("@", "linkedin", "github", "+91", "+1", "telangana", "hyderabad")
+    return sum(1 for token in contact_signals if token in lowered) >= 2
 
 
 def _guess_name(lines: list[str]) -> str:
@@ -139,3 +187,11 @@ def _guess_name(lines: list[str]) -> str:
         if 1 < len(words) <= 4 and all(re.fullmatch(r"[A-Za-z.'-]+", word) for word in words):
             return " ".join(word.capitalize() for word in words)
     return ""
+
+
+def _normalize_header(value: str) -> str:
+    normalized = str(value or "").lower().replace("&", " and ")
+    normalized = re.sub(r"[:\-\s]+$", "", normalized)
+    normalized = re.sub(r"[^a-z\s]", " ", normalized)
+    normalized = re.sub(r"\s+", " ", normalized)
+    return normalized.strip()

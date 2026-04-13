@@ -1,0 +1,145 @@
+[
+  {
+    "id": "OOP_B1",
+    "level": "Beginner",
+    "question": "What is Object-Oriented Programming (OOP)?",
+    "keywords": ["oop", "objects", "classes", "modularity", "reusability"],
+    "marks": 3
+  },
+  {
+    "id": "OOP_B2",
+    "level": "Beginner",
+    "question": "What are the four pillars of OOP?",
+    "keywords": ["encapsulation", "abstraction", "inheritance", "polymorphism"],
+    "marks": 3
+  },
+  {
+    "id": "OOP_B3",
+    "level": "Beginner",
+    "question": "What is a class and an object?",
+    "keywords": ["class", "object", "instance", "blueprint"],
+    "marks": 3
+  },
+  {
+    "id": "OOP_B4",
+    "level": "Beginner",
+    "question": "What is encapsulation?",
+    "keywords": ["data hiding", "access control", "private", "public"],
+    "marks": 3
+  },
+  {
+    "id": "OOP_B5",
+    "level": "Beginner",
+    "question": "What is inheritance?",
+    "keywords": ["inheritance", "base class", "derived class", "reuse"],
+    "marks": 3
+  },
+
+  {
+    "id": "OOP_D1",
+    "level": "Depth",
+    "question": "Explain polymorphism with compile-time and runtime examples.",
+    "keywords": ["polymorphism", "overloading", "overriding", "virtual function"],
+    "marks": 5
+  },
+  {
+    "id": "OOP_D2",
+    "level": "Depth",
+    "question": "Explain constructor types and copy constructor in C++.",
+    "keywords": ["constructor", "default", "parameterized", "copy constructor"],
+    "marks": 5
+  },
+  {
+    "id": "OOP_D3",
+    "level": "Depth",
+    "question": "What is the difference between shallow copy and deep copy?",
+    "keywords": ["shallow copy", "deep copy", "memory", "pointer"],
+    "marks": 5
+  },
+  {
+    "id": "OOP_D4",
+    "level": "Depth",
+    "question": "Explain different types of inheritance with examples.",
+    "keywords": ["single", "multiple", "multilevel", "hierarchical", "hybrid"],
+    "marks": 5
+  },
+  {
+    "id": "OOP_D5",
+    "level": "Depth",
+    "question": "Explain virtual functions and runtime polymorphism.",
+    "keywords": ["virtual", "vtable", "runtime binding", "override"],
+    "marks": 5
+  },
+
+  {
+    "id": "OOP_T1",
+    "level": "Trap",
+    "question": "Can constructors be virtual in C++?",
+    "keywords": ["constructor", "virtual", "not allowed", "reason"],
+    "marks": 5
+  },
+  {
+    "id": "OOP_T2",
+    "level": "Trap",
+    "question": "Does inheritance always improve code reuse?",
+    "keywords": ["inheritance vs composition", "tight coupling", "design tradeoff"],
+    "marks": 5
+  },
+  {
+    "id": "OOP_T3",
+    "level": "Trap",
+    "question": "Is function overloading the same as function overriding?",
+    "keywords": ["overloading vs overriding", "compile time", "runtime"],
+    "marks": 5
+  },
+  {
+    "id": "OOP_T4",
+    "level": "Trap",
+    "question": "Can private members be accessed in derived classes?",
+    "keywords": ["private", "access", "inheritance", "restriction"],
+    "marks": 5
+  },
+  {
+    "id": "OOP_T5",
+    "level": "Trap",
+    "question": "Is object slicing safe in C++?",
+    "keywords": ["object slicing", "loss of data", "base class", "issue"],
+    "marks": 5
+  },
+
+  {
+    "id": "OOP_S1",
+    "level": "Scenario",
+    "question": "Design a class hierarchy for a banking system using OOP principles.",
+    "keywords": ["class design", "inheritance", "encapsulation", "real world"],
+    "marks": 6
+  },
+  {
+    "id": "OOP_S2",
+    "level": "Scenario",
+    "question": "You have memory leaks in your C++ application. How would you fix them?",
+    "keywords": ["memory leak", "smart pointers", "delete", "raii"],
+    "marks": 6
+  },
+  {
+    "id": "OOP_S3",
+    "level": "Scenario",
+    "question": "How would you resolve the diamond problem in multiple inheritance?",
+    "keywords": ["diamond problem", "virtual inheritance", "ambiguity"],
+    "marks": 6
+  },
+  {
+    "id": "OOP_S4",
+    "level": "Scenario",
+    "question": "When would you choose composition over inheritance?",
+    "keywords": ["composition", "flexibility", "loose coupling", "design"],
+    "marks": 6
+  },
+  {
+    "id": "OOP_S5",
+    "level": "Scenario",
+    "question": "How would you implement runtime polymorphism in a real-world system?",
+    "keywords": ["virtual function", "base pointer", "override", "dynamic binding"],
+    "marks": 6
+  }
+]

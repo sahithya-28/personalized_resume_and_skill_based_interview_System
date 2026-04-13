@@ -1,6 +1,5 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { ArrowRight, Loader2, Sparkles, Upload } from 'lucide-react';
+import { Loader2, Sparkles, Upload } from 'lucide-react';
 import { fetchATSScoreFromFile } from '../app/api/resumeApi';
 import { buildResumeImproveDataFromAnalysis } from '../app/utils/resumeImproveData';
 
@@ -30,7 +29,6 @@ function normalizeSuggestionsError(error) {
 }
 
 export default function ATSScorePage() {
-  const navigate = useNavigate();
   const [selectedFile, setSelectedFile] = useState(null);
   const [loading, setLoading] = useState(false);
   const [suggestionsLoading, setSuggestionsLoading] = useState(false);
@@ -83,21 +81,6 @@ export default function ATSScorePage() {
     } finally {
       setLoading(false);
     }
-  }
-
-  function handleImproveResume() {
-    if (!resumeData) return;
-
-    sessionStorage.setItem(
-      'resumeImproveSession',
-      JSON.stringify({
-        resumeText: extractedText,
-        resumeData,
-        atsScore,
-        suggestions,
-      })
-    );
-    navigate('/resume-improve');
   }
 
   return (
@@ -195,18 +178,6 @@ export default function ATSScorePage() {
               ) : (
                 <p className="mt-4 text-sm text-slate-600">AI suggestions are unavailable right now, but your ATS score is ready.</p>
               )}
-            </div>
-
-            <div className="mt-6 flex flex-wrap gap-3">
-              <button
-                type="button"
-                onClick={handleImproveResume}
-                disabled={!resumeData}
-                className="inline-flex items-center gap-2 rounded-xl bg-slate-900 px-5 py-3 text-sm font-semibold text-white transition hover:bg-slate-800 disabled:opacity-60"
-              >
-                Improve Resume
-                <ArrowRight className="h-4 w-4" />
-              </button>
             </div>
           </div>
         ) : null}

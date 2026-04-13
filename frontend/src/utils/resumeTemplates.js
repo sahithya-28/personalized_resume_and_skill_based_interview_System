@@ -240,6 +240,80 @@ export function createMockParsedResume(fileName = 'resume.pdf') {
 }
 
 export function mapExtractedResumeData(extractedData = {}) {
+  const normalized = extractedData.normalized_resume || extractedData.normalizedResume || extractedData.normalized || null;
+  if (normalized) {
+    const contact = normalized.contact || {};
+    const links = [
+      contact.linkedin ? { label: 'LinkedIn', value: contact.linkedin } : null,
+      contact.github ? { label: 'GitHub', value: contact.github } : null,
+    ].filter(Boolean);
+
+    const customSections = [
+      ...(Array.isArray(normalized.certifications) && normalized.certifications.length
+        ? [{ name: 'Certifications', content: normalized.certifications.join('\n') }]
+        : []),
+      ...(Array.isArray(normalized.achievements) && normalized.achievements.length
+        ? [{ name: 'Achievements', content: normalized.achievements.join('\n') }]
+        : []),
+      ...((normalized.extra_sections || []).map((section) => ({
+        name: section.name || 'Section',
+        content: section.content || '',
+      }))),
+    ];
+
+    const normalizedSkills = Array.isArray(normalized.skills)
+      ? normalized.skills.filter((item) => String(item || '').trim())
+      : [];
+    const normalizedProjects = Array.isArray(normalized.projects)
+      ? normalized.projects
+          .map((project) => ({
+            title: project.title || '',
+            description: Array.isArray(project.description) ? project.description.join('\n') : (project.description || ''),
+          }))
+          .filter((project) => project.title.trim() && project.description.trim())
+      : [];
+    const normalizedExperience = Array.isArray(normalized.experience)
+      ? normalized.experience
+          .map((item) => ({
+            title: item.role || '',
+            company: item.company || '',
+            date: item.duration || '',
+            location: '',
+            description: Array.isArray(item.description) ? item.description.join('\n') : (item.description || ''),
+          }))
+          .filter((item) => item.title.trim() && item.description.trim())
+      : [];
+    const normalizedEducation = Array.isArray(normalized.education)
+      ? normalized.education
+          .map((item) => ({
+            degree: item.degree || '',
+            institution: item.institution || '',
+            year: item.year || '',
+            description: item.score || '',
+          }))
+          .filter((item) => item.degree.trim())
+      : [];
+    return {
+      ...initialResumeData,
+      name: normalized.name || extractedData.name || '',
+      email: contact.email || extractedData.email || '',
+      phone: contact.phone || extractedData.phone || '',
+      summary: normalized.summary || '',
+      about: normalized.summary || '',
+      skills: normalizedSkills,
+      projects: normalizedProjects,
+      workExperience: normalizedExperience,
+      education: normalizedEducation,
+      coursework: extractedData.coursework || [],
+      links,
+      customSections,
+      rawText: '',
+      sourceSections: normalized.source_sections || extractedData.sourceSections || [],
+      sectionMapping: normalized.section_mapping || [],
+      suggestedCustomSections: [],
+    };
+  }
+
   return {
     ...initialResumeData,
     ...extractedData,
@@ -261,7 +335,13 @@ export function mapExtractedResumeData(extractedData = {}) {
 export function hasSectionContent(resumeData, section) {
   if (section === 'summary') return Boolean((resumeData.summary || '').trim());
   if (section === 'about') return Boolean((resumeData.about || resumeData.summary || '').trim());
-  if (arraySections.includes(section)) return Array.isArray(resumeData[section]) && resumeData[section].length > 0;
+  if (arraySections.includes(section)) {
+    return Array.isArray(resumeData[section]) && resumeData[section].some((item) => {
+      if (typeof item === 'string') return Boolean(item.trim());
+      if (!item || typeof item !== 'object') return false;
+      return Object.values(item).some((value) => String(value || '').trim());
+    });
+  }
   return false;
 }
 

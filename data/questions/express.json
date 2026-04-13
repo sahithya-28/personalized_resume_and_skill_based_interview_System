@@ -1,0 +1,145 @@
+[
+  {
+    "id": "EXP_B1",
+    "level": "Beginner",
+    "question": "What is Express.js and how does it relate to Node.js?",
+    "keywords": ["express", "nodejs", "framework", "web server", "api"],
+    "marks": 3
+  },
+  {
+    "id": "EXP_B2",
+    "level": "Beginner",
+    "question": "What is middleware in Express.js?",
+    "keywords": ["middleware", "request response", "next", "processing"],
+    "marks": 3
+  },
+  {
+    "id": "EXP_B3",
+    "level": "Beginner",
+    "question": "What is the purpose of app.use() in Express.js?",
+    "keywords": ["app.use", "middleware", "global middleware", "routing"],
+    "marks": 3
+  },
+  {
+    "id": "EXP_B4",
+    "level": "Beginner",
+    "question": "What is the difference between app.get() and app.post()?",
+    "keywords": ["get", "post", "http methods", "data retrieval", "data submission"],
+    "marks": 3
+  },
+  {
+    "id": "EXP_B5",
+    "level": "Beginner",
+    "question": "How do you serve static files in Express.js?",
+    "keywords": ["static files", "express.static", "public folder"],
+    "marks": 3
+  },
+
+  {
+    "id": "EXP_D1",
+    "level": "Depth",
+    "question": "Explain middleware chaining in Express.js and how next() works.",
+    "keywords": ["middleware chaining", "next", "execution flow", "request lifecycle"],
+    "marks": 5
+  },
+  {
+    "id": "EXP_D2",
+    "level": "Depth",
+    "question": "Explain different types of middleware in Express.js.",
+    "keywords": ["application middleware", "router middleware", "error middleware", "built-in"],
+    "marks": 5
+  },
+  {
+    "id": "EXP_D3",
+    "level": "Depth",
+    "question": "How do you retrieve URL parameters and query parameters in Express.js?",
+    "keywords": ["req.params", "req.query", "url params", "query strings"],
+    "marks": 5
+  },
+  {
+    "id": "EXP_D4",
+    "level": "Depth",
+    "question": "Explain how req.body works and how data is parsed in Express.js.",
+    "keywords": ["req.body", "json parsing", "urlencoded", "middleware"],
+    "marks": 5
+  },
+  {
+    "id": "EXP_D5",
+    "level": "Depth",
+    "question": "Explain the role of express.Router and why it is used.",
+    "keywords": ["router", "modular routes", "separation of concerns", "route grouping"],
+    "marks": 5
+  },
+
+  {
+    "id": "EXP_T1",
+    "level": "Trap",
+    "question": "If middleware does not call next(), what happens in Express.js?",
+    "keywords": ["next missing", "request stuck", "middleware flow"],
+    "marks": 5
+  },
+  {
+    "id": "EXP_T2",
+    "level": "Trap",
+    "question": "Can app.get() be used to send sensitive data securely?",
+    "keywords": ["get vs post", "url exposure", "security", "http methods"],
+    "marks": 5
+  },
+  {
+    "id": "EXP_T3",
+    "level": "Trap",
+    "question": "Is Express.js sufficient by itself to build scalable applications without Node.js?",
+    "keywords": ["express dependency", "node runtime", "architecture"],
+    "marks": 5
+  },
+  {
+    "id": "EXP_T4",
+    "level": "Trap",
+    "question": "Does express.static() handle dynamic content?",
+    "keywords": ["static vs dynamic", "limitations", "middleware"],
+    "marks": 5
+  },
+  {
+    "id": "EXP_T5",
+    "level": "Trap",
+    "question": "Is req.query the same as req.params?",
+    "keywords": ["difference", "query vs params", "url structure"],
+    "marks": 5
+  },
+
+  {
+    "id": "EXP_S1",
+    "level": "Scenario",
+    "question": "Design an Express.js API with authentication, validation, and logging using middleware.",
+    "keywords": ["middleware chain", "authentication", "authorization", "logging"],
+    "marks": 6
+  },
+  {
+    "id": "EXP_S2",
+    "level": "Scenario",
+    "question": "How would you structure a large Express.js application using routers?",
+    "keywords": ["router", "modularization", "scalability", "folder structure"],
+    "marks": 6
+  },
+  {
+    "id": "EXP_S3",
+    "level": "Scenario",
+    "question": "How would you handle errors and 404 responses in an Express.js application?",
+    "keywords": ["error handling", "404 middleware", "status codes"],
+    "marks": 6
+  },
+  {
+    "id": "EXP_S4",
+    "level": "Scenario",
+    "question": "You need to enable CORS for a frontend application consuming your API. How would you implement it?",
+    "keywords": ["cors", "headers", "cross origin", "security"],
+    "marks": 6
+  },
+  {
+    "id": "EXP_S5",
+    "level": "Scenario",
+    "question": "How would you implement a logging middleware that tracks all incoming requests?",
+    "keywords": ["logging middleware", "req.method", "req.url", "monitoring"],
+    "marks": 6
+  }
+]

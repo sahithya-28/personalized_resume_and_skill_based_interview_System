@@ -19,8 +19,8 @@ from .intelligence import (
     extract_career_timeline,
     infer_related_concepts,
     predict_candidate_type,
+    score_resume_roles,
 )
-from .ml_models import classify_resume_profile
 from .nlp_pipeline import build_nlp_artifacts
 from .parser import parse_resume
 from .skill_intelligence import (
@@ -31,6 +31,7 @@ from .skill_intelligence import (
     profile_similarity_analysis,
     suggest_interview_topics,
 )
+from .suggestions import generate_resume_analysis_suggestions
 from .summarization import generate_resume_summary
 
 
@@ -51,14 +52,20 @@ def build_advanced_resume_report(text: str, job_description: str | None = None) 
     completeness = section_completeness(sections)
     achievements = detect_achievements(artifacts.sentences)
     writing_quality = analyze_writing_quality(artifacts.sentences)
-    profile_classification = classify_resume_profile(artifacts.cleaned_text)
-    similarity_scores = compare_resume_to_profiles(artifacts.cleaned_text)
-    legacy_similarity_scores = profile_similarity_analysis(artifacts.cleaned_text)
     density = keyword_density(artifacts.filtered_tokens, sum(skill_data["frequencies"].values()))
     interview_topics = suggest_interview_topics(skill_data["detected_skills"])
     summary = generate_resume_summary(artifacts.sentences)
     related_concepts = infer_related_concepts(artifacts.sentences, skill_data["detected_skills"])
     career_timeline = extract_career_timeline(sections, entities, artifacts.doc)
+    profile_classification = score_resume_roles(
+        sections=sections,
+        skills=skill_data["detected_skills"],
+        projects=projects,
+        summary_text=summary["summary_text"],
+        timeline=career_timeline,
+    )
+    similarity_scores = compare_resume_to_profiles(artifacts.cleaned_text)
+    legacy_similarity_scores = profile_similarity_analysis(artifacts.cleaned_text)
     candidate_type = predict_candidate_type(artifacts.cleaned_text, sections, career_timeline)
     adaptive_analysis = build_adaptive_analysis(candidate_type, career_timeline, achievements, projects, sections)
 
@@ -92,7 +99,7 @@ def build_advanced_resume_report(text: str, job_description: str | None = None) 
         ml_strength=ml_strength,
     )
 
-    suggestions = generate_improvement_suggestions(
+    rule_based_suggestions = generate_improvement_suggestions(
         contact_validation,
         completeness,
         evidence,
@@ -104,7 +111,24 @@ def build_advanced_resume_report(text: str, job_description: str | None = None) 
         adaptive_analysis=adaptive_analysis,
         jd_match_score=resume_score.get("jd_match_score", 0.0),
         jd_missing_skills=resume_score.get("jd_missing_skills", []),
+        predicted_role=profile_classification.get("predicted_profile", ""),
+        sections=sections,
+        certifications=entities.get("certifications", []),
     )
+
+    try:
+        suggestions = generate_resume_analysis_suggestions(
+            resume_text=artifacts.cleaned_text,
+            predicted_role=profile_classification.get("predicted_profile", ""),
+            experience_level=candidate_type.get("predicted_category", ""),
+            skills=skill_data["detected_skills"],
+            projects=projects,
+            certifications=entities.get("certifications", []),
+            weaknesses=build_weaknesses(completeness, evidence, density, projects, sections),
+            fallback_suggestions=rule_based_suggestions,
+        )
+    except Exception:
+        suggestions = rule_based_suggestions
 
     knowledge_graph = build_knowledge_graph(parsed.get("name", ""), skill_data["detected_skills"], projects, entities)
 
@@ -280,7 +304,9 @@ def build_analysis_payload(
                 {
                     "skill": skill,
                     "strength": skill_data["frequencies"].get(skill, 0),
-                    "evidence": item["status"],
+                    "evidence": item.get("evidence_text") or item["status"],
+                    "confidence": item.get("confidence_label", ""),
+                    "source_section": item.get("source_section", ""),
                     "locations": item.get("locations", []),
                     "contexts": item.get("contexts", []),
                 }
@@ -297,7 +323,6 @@ def build_analysis_payload(
         },
         "entity_extraction": {
             "skills": entities.get("skills", []),
-            "organizations": entities.get("organizations", []),
             "universities": entities.get("universities", []),
             "certifications": entities.get("certifications", []),
             "empty_messages": {

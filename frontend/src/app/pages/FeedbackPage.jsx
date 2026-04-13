@@ -1,12 +1,38 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { AlertCircle, ArrowUpRight, Award, History, Star, TrendingUp } from 'lucide-react';
+import {
+  AlertCircle,
+  ArrowUpRight,
+  Award,
+  History,
+  Lightbulb,
+  MessageSquareText,
+  Star,
+  TrendingUp,
+} from 'lucide-react';
+import { evaluateSkillVerification } from '../api/resumeApi';
 
 function getLabel(score) {
   if (score >= 85) return 'Excellent';
   if (score >= 70) return 'Good Performance';
   if (score >= 50) return 'Average';
   return 'Needs Improvement';
+}
+
+function buildEvaluationPayload(interview) {
+  const answers = Array.isArray(interview?.answers) ? interview.answers : [];
+  const correctCount = answers.filter((item) => Number(item?.score || 0) >= 60).length;
+
+  return {
+    skill: interview?.skill || 'Skill',
+    score: correctCount,
+    total_questions: answers.length,
+    answers: answers.map((item) => ({
+      question: item?.question || '',
+      user_answer: item?.answer || '',
+      correct: Number(item?.score || 0) >= 60,
+    })),
+  };
 }
 
 export default function FeedbackPage() {
@@ -29,21 +55,7 @@ export default function FeedbackPage() {
   const resumeScore = analysis?.overall_score || 0;
   const interviewScore = interview?.totalScore || 0;
   const finalScore = Math.round((resumeScore * 0.4) + (interviewScore * 0.6));
-
-  const strengths = [];
-  const weakAreas = [];
-
-  if (resumeScore >= 75) strengths.push('Strong resume baseline score.');
-  if ((analysis?.skills || []).length >= 5) strengths.push('Good skill coverage extracted from resume.');
-  if (interviewScore >= 75) strengths.push('High interview answer quality and structure.');
-  if ((analysis?.vulnerabilities || []).length === 0) strengths.push('No major resume vulnerabilities detected.');
-
-  if ((analysis?.vulnerabilities || []).length > 0) weakAreas.push(...analysis.vulnerabilities.slice(0, 3));
-  if (interviewScore < 60) weakAreas.push('Answer quality needs better structure and measurable outcomes.');
-  if (resumeScore < 60) weakAreas.push('Resume sections need stronger and clearer content.');
-
-  const defaultStrengths = strengths.length ? strengths : ['Consistent effort across resume and interview steps.'];
-  const defaultWeakAreas = weakAreas.length ? weakAreas : ['Keep practicing and add more measurable impact in answers.'];
+  const currentAnswers = Array.isArray(interview?.answers) ? interview.answers : [];
 
   const [history, setHistory] = useState(() => {
     try {
@@ -59,6 +71,9 @@ export default function FeedbackPage() {
       return [];
     }
   });
+  const [evaluation, setEvaluation] = useState(null);
+  const [evaluationLoading, setEvaluationLoading] = useState(false);
+  const [evaluationError, setEvaluationError] = useState('');
 
   useEffect(() => {
     if (!analysis || !interview) return;
@@ -73,7 +88,6 @@ export default function FeedbackPage() {
       resumeScore,
       interviewScore,
       finalScore,
-      vulnerabilities: analysis.vulnerabilities || [],
       skill: interview.skill,
     };
 
@@ -118,10 +132,61 @@ export default function FeedbackPage() {
     sessionStorage.setItem(saveKey, '1');
     setVerificationHistory(updated);
   }, [analysis, interview, finalScore, interviewScore, resumeScore, verificationHistory]);
+
+  useEffect(() => {
+    if (!interview || !currentAnswers.length) return;
+
+    const cacheKey = `skillEvaluation:${interview.answeredAt || interview.skill || 'default'}`;
+    const cachedRaw = sessionStorage.getItem(cacheKey);
+    if (cachedRaw) {
+      try {
+        const cached = JSON.parse(cachedRaw);
+        if (cached && typeof cached === 'object') {
+          setEvaluation(cached);
+          return;
+        }
+      } catch {
+        // ignore broken cache
+      }
+    }
+
+    const load = async () => {
+      try {
+        setEvaluationLoading(true);
+        setEvaluationError('');
+        const result = await evaluateSkillVerification(buildEvaluationPayload(interview));
+        sessionStorage.setItem(cacheKey, JSON.stringify(result));
+        setEvaluation(result);
+      } catch (err) {
+        setEvaluationError(err.message || 'Unable to generate interview evaluation.');
+      } finally {
+        setEvaluationLoading(false);
+      }
+    };
+
+    load();
+  }, [interview, currentAnswers.length]);
+
   const latest = history[history.length - 1] || null;
   const previous = history.length > 1 ? history[history.length - 2] : null;
   const delta = latest && previous ? latest.finalScore - previous.finalScore : null;
-  const currentAnswers = Array.isArray(interview?.answers) ? interview.answers : [];
+
+  const fallbackStrengths = [];
+  const fallbackWeakAreas = [];
+  const fallbackSuggestions = [];
+
+  if (resumeScore >= 75) fallbackStrengths.push('Strong resume baseline score.');
+  if ((analysis?.skills || []).length >= 5) fallbackStrengths.push('Good skill coverage extracted from resume.');
+  if (interviewScore >= 75) fallbackStrengths.push('High interview answer quality and structure.');
+  if (interviewScore < 60) fallbackWeakAreas.push('Answer quality needs better structure and measurable outcomes.');
+  if (resumeScore < 60) fallbackWeakAreas.push('Resume sections need stronger and clearer content.');
+  fallbackSuggestions.push(`Improve ${interview?.skill || 'the selected skill'} answers with clearer technical reasoning and more concrete examples.`);
+
+  const strengths = evaluation?.strengths?.length ? evaluation.strengths : fallbackStrengths.length ? fallbackStrengths : ['Consistent effort across resume and interview steps.'];
+  const weakAreas = evaluation?.weaknesses?.length ? evaluation.weaknesses : fallbackWeakAreas.length ? fallbackWeakAreas : ['Keep practicing and add more measurable impact in answers.'];
+  const improvementSuggestions = evaluation?.improvement_suggestions?.length
+    ? evaluation.improvement_suggestions
+    : fallbackSuggestions;
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-50 via-white to-teal-50 px-4 py-12">
@@ -159,6 +224,28 @@ export default function FeedbackPage() {
           </p>
         </div>
 
+        <div className="bg-white p-8 rounded-2xl shadow-lg mb-8">
+          <div className="flex items-center gap-3 mb-4">
+            <MessageSquareText className="w-6 h-6 text-indigo-600" />
+            <h3 className="text-2xl font-bold text-gray-900">AI Interview Evaluation</h3>
+          </div>
+
+          {evaluationLoading ? (
+            <p className="text-gray-600">Generating personalized evaluation...</p>
+          ) : evaluation ? (
+            <div className="space-y-3">
+              <p className="inline-flex rounded-full bg-indigo-50 px-3 py-1 text-sm font-semibold text-indigo-700">
+                {evaluation.performance_level} - {interview?.skill || 'Skill'}
+              </p>
+              <p className="text-gray-700 leading-relaxed">{evaluation.summary}</p>
+            </div>
+          ) : (
+            <p className="text-gray-600">
+              {evaluationError || 'Interview evaluation is not available for this attempt.'}
+            </p>
+          )}
+        </div>
+
         <div className="grid md:grid-cols-2 gap-8 mb-8">
           <div className="bg-white p-8 rounded-2xl shadow-lg">
             <div className="flex items-center mb-6">
@@ -168,7 +255,7 @@ export default function FeedbackPage() {
               <h3 className="text-2xl font-bold text-gray-900">Strengths</h3>
             </div>
             <ul className="space-y-3">
-              {defaultStrengths.map((strength) => (
+              {strengths.map((strength) => (
                 <li key={strength} className="flex items-start">
                   <Star className="w-5 h-5 text-green-600 mr-3 mt-0.5 flex-shrink-0" />
                   <span className="text-gray-700">{strength}</span>
@@ -182,16 +269,35 @@ export default function FeedbackPage() {
               <div className="w-12 h-12 bg-amber-100 rounded-xl flex items-center justify-center mr-4">
                 <AlertCircle className="w-6 h-6 text-amber-600" />
               </div>
-              <h3 className="text-2xl font-bold text-gray-900">Weak Points</h3>
+              <h3 className="text-2xl font-bold text-gray-900">Weaknesses</h3>
             </div>
             <ul className="space-y-3">
-              {defaultWeakAreas.map((area) => (
+              {weakAreas.map((area) => (
                 <li key={area} className="flex items-start">
                   <AlertCircle className="w-5 h-5 text-amber-600 mr-3 mt-0.5 flex-shrink-0" />
                   <span className="text-gray-700">{area}</span>
                 </li>
               ))}
             </ul>
+          </div>
+        </div>
+
+        <div className="bg-white p-8 rounded-2xl shadow-lg mb-8">
+          <div className="flex items-center gap-3 mb-5">
+            <div className="w-12 h-12 bg-indigo-100 rounded-xl flex items-center justify-center">
+              <Lightbulb className="w-6 h-6 text-indigo-600" />
+            </div>
+            <div>
+              <h3 className="text-2xl font-bold text-gray-900">Improvement Suggestions</h3>
+              <p className="text-gray-600">Actionable next steps based on your skill verification answers.</p>
+            </div>
+          </div>
+          <div className="space-y-3">
+            {improvementSuggestions.map((item, index) => (
+              <div key={`${item}-${index}`} className="rounded-2xl border border-indigo-100 bg-indigo-50 px-4 py-4 text-sm text-indigo-950">
+                {item}
+              </div>
+            ))}
           </div>
         </div>
 

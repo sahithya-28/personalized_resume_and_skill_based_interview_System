@@ -4,7 +4,6 @@ import {
   AlertTriangle,
   BadgeCheck,
   Briefcase,
-  Building2,
   ChevronDown,
   FileSearch,
   GraduationCap,
@@ -23,8 +22,7 @@ const ANALYSIS_SECTIONS = [
   { id: 'skill_analysis', label: 'Skill Analysis', icon: Wrench },
   { id: 'project_analysis', label: 'Project Analysis', icon: Briefcase },
   { id: 'entity_extraction', label: 'Entity Extraction', icon: FileSearch },
-  { id: 'career_profile_analysis', label: 'Career Profile', icon: Target },
-  { id: 'similarity_analysis', label: 'Similarity', icon: Sparkles },
+  { id: 'similarity_analysis', label: 'Career Profile', icon: Target },
 ];
 
 const SUPPORTING_SKILL_KEYWORDS = [
@@ -190,7 +188,7 @@ function deriveStructuredAnalysis(raw) {
   const skillStrengthAnalysis = raw?.skill_strength_analysis || {};
 
   const overview = raw?.overview || {
-    resume_score: raw?.resume_score?.total ?? raw?.overall_score ?? 0,
+    resume_score: raw?.ats_score ?? raw?.overall_score ?? raw?.resume_score?.total ?? 0,
     predicted_career_profile: profile?.predicted_profile || 'Unknown',
     detected_skills_count: skills.length,
     projects_detected_count: projects.length,
@@ -261,7 +259,9 @@ function deriveStructuredAnalysis(raw) {
       evidence_table: Object.entries(verification).map(([skill, item]) => ({
         skill,
         strength: raw?.skill_strength_analysis?.by_skill?.[skill]?.mentions || 0,
-        evidence: item?.status || 'Unknown',
+        evidence: item?.evidence_text || item?.status || 'Unknown',
+        confidence: item?.confidence_label || '',
+        source_section: item?.source_section || '',
         locations: item?.locations || item?.evidence || [],
       })),
       empty_message: !skills.length
@@ -276,12 +276,10 @@ function deriveStructuredAnalysis(raw) {
     },
     entity_extraction: {
       skills: entities?.skills || [],
-      organizations: entities?.organizations || [],
       universities: entities?.universities || [],
       certifications: entities?.certifications || [],
       empty_messages: {
         skills: !(entities?.skills || []).length ? 'No skills detected in this resume. Add a Skills section to improve analysis.' : '',
-        organizations: !(entities?.organizations || []).length ? 'No organizations detected. Add company or internship names if relevant.' : '',
         universities: !(entities?.universities || []).length ? 'No universities detected. Add education details if applicable.' : '',
         certifications: !(entities?.certifications || []).length ? 'No certifications detected. Add relevant certifications if available.' : '',
       },
@@ -511,7 +509,8 @@ function SkillAnalysisTab({ data }) {
               <th className="py-2 pr-4">Skill</th>
               <th className="py-2 pr-4">Mentions</th>
               <th className="py-2 pr-4">Evidence</th>
-              <th className="py-2">Locations</th>
+              <th className="py-2 pr-4">Source</th>
+              <th className="py-2">Confidence</th>
             </tr>
           </thead>
           <tbody>
@@ -520,7 +519,8 @@ function SkillAnalysisTab({ data }) {
                 <td className="py-3 pr-4 font-semibold text-gray-900">{item.skill}</td>
                 <td className="py-3 pr-4">{item.strength}</td>
                 <td className="py-3 pr-4">{item.evidence}</td>
-                <td className="py-3">{(item.locations || []).join(', ') || 'General'}</td>
+                <td className="py-3 pr-4">{item.source_section || (item.locations || []).join(', ') || 'General'}</td>
+                <td className="py-3">{item.confidence || 'n/a'}</td>
               </tr>
             ))}
           </tbody>
@@ -565,7 +565,6 @@ function ProjectAnalysisTab({ data }) {
 function EntityExtractionTab({ data }) {
   const entityGroups = [
     ['skills', 'Skills', Wrench],
-    ['organizations', 'Organizations', Building2],
     ['universities', 'Universities', GraduationCap],
     ['certifications', 'Certifications', BadgeCheck],
   ];
@@ -610,48 +609,12 @@ function EntityExtractionTab({ data }) {
   );
 }
 
-function CareerProfileTab({ data }) {
-  if (!data?.prediction?.predicted_profile || data.prediction.predicted_profile === 'Unknown') {
-    return (
-      <EmptyState
-        title="No career profile predicted"
-        message={data?.empty_message || 'No career profile could be predicted.'}
-        suggestion="Provide more technical experience or projects."
-      />
-    );
-  }
-
-  const hasChart = (data?.chart?.labels || []).length && (data?.chart?.values || []).length;
-
-  return (
-    <div className="space-y-5">
-      <div className="bg-white rounded-2xl shadow-lg p-5 border border-slate-100">
-        <p className="text-sm text-gray-600">Predicted profile</p>
-        <p className="text-3xl font-bold text-gray-900 mt-1">{data?.prediction?.predicted_profile}</p>
-      </div>
-      {hasChart ? (
-        <ChartPanel title="Career Profile Prediction Chart" tooltip="Compares how strongly the resume aligns with different role profiles.">
-          <Bar
-            data={{
-              labels: data?.chart?.labels || [],
-              datasets: [{ label: 'Score', data: data?.chart?.values || [], backgroundColor: '#7c3aed' }],
-            }}
-            options={{ responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }}
-          />
-        </ChartPanel>
-      ) : (
-        <EmptyState title="No profile chart available" message="A role was predicted, but detailed profile comparison data is unavailable." />
-      )}
-    </div>
-  );
-}
-
 function SimilarityTab({ data }) {
   if (!data?.scores?.length) {
     return (
       <EmptyState
-        title="No similarity analysis available"
-        message={data?.empty_message || 'No similarity analysis available.'}
+        title="No career profile analysis available"
+        message={data?.empty_message || 'No career profile analysis available.'}
         suggestion="Add stronger project, experience, and tool evidence."
       />
     );
@@ -661,7 +624,7 @@ function SimilarityTab({ data }) {
     <div className="space-y-5">
       {(data.chart?.labels || []).length ? (
         <div className="space-y-3">
-          <ChartPanel title="Resume Similarity Scores" tooltip="Similarity score is calculated by comparing your detected skills, projects, and experience signals against common role profile patterns.">
+          <ChartPanel title="Career Profile Prediction Chart" tooltip="This chart compares how strongly your resume aligns with different career profiles based on detected skills, projects, and experience signals.">
             <Bar
               data={{
                 labels: data.chart?.labels || [],
@@ -671,13 +634,13 @@ function SimilarityTab({ data }) {
             />
           </ChartPanel>
           <p className="text-sm text-gray-600">
-            Similarity scores represent how closely your resume matches common role profiles based on detected skills and experience signals.
+            These scores represent how closely your resume matches different career profiles based on detected skills and experience signals.
           </p>
         </div>
       ) : null}
       <details className="bg-white rounded-2xl shadow-lg p-5 border border-slate-100" open>
         <summary className="flex cursor-pointer list-none items-center justify-between gap-3">
-          <h4 className="text-lg font-bold text-gray-900">Similarity Breakdown</h4>
+          <h4 className="text-lg font-bold text-gray-900">Career Profile Breakdown</h4>
           <ChevronDown className="w-4 h-4 text-gray-500" />
         </summary>
         <div className="mt-3 space-y-3">
@@ -752,12 +715,12 @@ export default function ResumeScorePage() {
           </div>
           <div className="grid lg:grid-cols-6 md:grid-cols-2 gap-4">
             <MetricCard
-              title="Resume Score"
+              title="ATS Score"
               value={overview.resume_score ?? 'Not available'}
               helper="Out of 100"
               tone="indigo"
               emphasis="primary"
-              tooltip="Calculated from resume completeness, evidence quality, technical detail, and structural quality."
+              tooltip="Calculated using ATS-style keyword matching, section coverage, content quality, and formatting quality."
               extra={`${resumeScoreBenchmark?.label || ''} - ${resumeScoreBenchmark?.detail || ''}`}
             />
             <MetricCard
@@ -846,7 +809,6 @@ export default function ResumeScorePage() {
                     {section.id === 'skill_analysis' ? <SkillAnalysisTab data={sectionData} /> : null}
                     {section.id === 'project_analysis' ? <ProjectAnalysisTab data={sectionData} /> : null}
                     {section.id === 'entity_extraction' ? <EntityExtractionTab data={sectionData} /> : null}
-                    {section.id === 'career_profile_analysis' ? <CareerProfileTab data={sectionData} /> : null}
                     {section.id === 'similarity_analysis' ? <SimilarityTab data={sectionData} /> : null}
                   </div>
                 </details>

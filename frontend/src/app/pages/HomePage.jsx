@@ -42,7 +42,7 @@ export default function HomePage() {
               User Analysis
             </h3>
             <p className="text-gray-600 leading-relaxed">
-              Upload resume, extract skills and sections, detect weak points, verify skills, answer adaptive questions, and get scored feedback.
+              Upload your resume, extract skills and sections, verify skills, answer adaptive questions, and get scored feedback.
             </p>
           </Link>
 

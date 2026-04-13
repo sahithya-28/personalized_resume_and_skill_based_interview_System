@@ -1,5 +1,13 @@
 export const API_BASE_URL = 'http://localhost:8000';
 
+function toNetworkAwareError(error, fallbackMessage) {
+  const message = String(error?.message || '').trim();
+  if (!message || message === 'Failed to fetch') {
+    return new Error(`${fallbackMessage} Make sure the backend is running at ${API_BASE_URL}.`);
+  }
+  return error instanceof Error ? error : new Error(message);
+}
+
 async function parseError(response) {
   let detail = `Request failed with status ${response.status}`;
   try {
@@ -146,35 +154,43 @@ export async function getResumeTemplates() {
 }
 
 export async function getMatchedSkills(skills) {
-  const response = await fetch(`${API_BASE_URL}/skill-verification/matched-skills`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({ skills }),
-  });
+  try {
+    const response = await fetch(`${API_BASE_URL}/skill-verification/matched-skills`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ skills }),
+    });
 
-  if (!response.ok) {
-    await parseError(response);
+    if (!response.ok) {
+      await parseError(response);
+    }
+
+    return response.json();
+  } catch (error) {
+    throw toNetworkAwareError(error, 'Unable to load skill verification questions.');
   }
-
-  return response.json();
 }
 
 export async function getSkillQuestions(skill) {
-  const response = await fetch(`${API_BASE_URL}/skill-verification/questions`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({ skill }),
-  });
+  try {
+    const response = await fetch(`${API_BASE_URL}/skill-verification/questions`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ skill }),
+    });
 
-  if (!response.ok) {
-    await parseError(response);
+    if (!response.ok) {
+      await parseError(response);
+    }
+
+    return response.json();
+  } catch (error) {
+    throw toNetworkAwareError(error, `Unable to load questions for ${skill}.`);
   }
-
-  return response.json();
 }
 
 export async function scoreSkillAnswer({ skill, questionId, answer }) {
@@ -191,4 +207,24 @@ export async function scoreSkillAnswer({ skill, questionId, answer }) {
   }
 
   return response.json();
+}
+
+export async function evaluateSkillVerification(payload) {
+  try {
+    const response = await fetch(`${API_BASE_URL}/skill-verification/evaluate`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(payload),
+    });
+
+    if (!response.ok) {
+      await parseError(response);
+    }
+
+    return response.json();
+  } catch (error) {
+    throw toNetworkAwareError(error, 'Unable to generate interview evaluation.');
+  }
 }

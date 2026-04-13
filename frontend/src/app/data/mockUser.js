@@ -8,12 +8,6 @@ export const resumeScoreData = {
   },
 };
 
-export const vulnerabilitiesData = [
-  { title: 'Education Gap', type: 'gap', explanation: 'Interviewers may question consistency.' },
-  { title: 'Few Projects', type: 'skills-mismatch', explanation: 'Depth-testing questions expected.' },
-  { title: 'Domain Switch', type: 'domain', explanation: 'Why this transition?' },
-];
-
 export const skillQuestionsData = [
   {
     skill: 'React',

@@ -14,7 +14,7 @@ export default function AboutPage() {
           <h2 className="text-3xl font-bold text-gray-900 text-center mb-4">Our Mission</h2>
           <p className="text-gray-700 text-lg leading-relaxed text-center">
             To empower job seekers with AI-driven interview preparation tools that build confidence, 
-            identify weaknesses, and maximize success in technical and behavioral interviews.
+            sharpen interview readiness, and maximize success in technical and behavioral interviews.
           </p>
         </div>
 
@@ -32,7 +32,7 @@ export default function AboutPage() {
               </li>
               <li className="flex items-start">
                 <span className="text-indigo-600 mr-3 mt-1">•</span>
-                <span>Uncertainty about weak areas that might be questioned by interviewers</span>
+                <span>Uncertainty about how well their resume and skills will hold up in interviews</span>
               </li>
               <li className="flex items-start">
                 <span className="text-indigo-600 mr-3 mt-1">•</span>
@@ -45,7 +45,7 @@ export default function AboutPage() {
             </ul>
             <p className="mt-6">
               <span className="font-semibold text-gray-900">Our Solution:</span> SRIS analyzes your resume, 
-              identifies vulnerabilities, verifies skills through targeted questions, and provides personalized 
+              verifies skills through targeted questions, and provides personalized 
               interview preparation based on your background and target company.
             </p>
           </div>
@@ -96,7 +96,6 @@ export default function AboutPage() {
           <div className="space-y-4">
             {[
               { title: 'Resume-Based Analysis', description: 'Questions tailored to YOUR specific background and experience' },
-              { title: 'Vulnerability Detection', description: 'Identify weak spots before interviewers do' },
               { title: 'Skill Verification', description: 'Prove your proficiency through progressive question difficulty' },
               { title: 'Company-Specific Prep', description: 'Customized preparation for your target companies' },
               { title: 'ATS Optimization', description: 'Improve resume compatibility with applicant tracking systems' },

@@ -19,43 +19,15 @@ export default function ResumeUploadPage() {
       setError('');
       
       const result = await analyzeResume(selectedFile);
-      
-      const parsedData = result.parsed_data || {};
-      const sections = result.sections || {};
-      const skills = Array.isArray(result.skills) ? result.skills : [];
-      let mappedProjects = [];
-      let mappedExperience = [];
-      let mappedEducation = [];
-      let mappedCertifications = [];
-      
-      if (sections.projects) {
-        mappedProjects = [{ title: 'Extracted Projects', description: sections.projects.trim() }];
-      }
-      if (sections.experience) {
-        mappedExperience = [{ title: 'Extracted Experience', company: '', date: '', location: '', description: sections.experience.trim() }];
-      }
-      if (sections.education) {
-        mappedEducation = [{ degree: 'Extracted Education', institution: '', year: '', description: sections.education.trim() }];
-      }
-      if (sections.certifications) {
-        mappedCertifications = [{ name: 'Certifications', content: sections.certifications.trim() }];
-      }
 
+      const normalized = result?.normalized_resume || {};
+      const fallbackName = selectedFile.name.replace(/\.[^.]+$/, '').replace(/[_-]+/g, ' ').trim();
       const parsedResume = {
-        name: parsedData.name || selectedFile.name.replace(/\.[^.]+$/, '').replace(/[_-]+/g, ' ').trim(),
-        email: parsedData.email || '',
-        phone: parsedData.phone || '',
-        summary: sections.summary || '',
-        skills: skills,
-        projects: mappedProjects,
-        education: mappedEducation,
-        workExperience: mappedExperience,
-        coursework: [],
-        links: [],
-        customSections: mappedCertifications,
-        rawText: result.preprocessing?.cleaned_text || Object.values(sections).join('\n'),
-        sourceSections: Object.keys(sections),
-        atsScore: result.overall_score || 0,
+        ...result,
+        normalized_resume: {
+          ...normalized,
+          name: normalized.name || fallbackName,
+        },
       };
 
       sessionStorage.setItem('uploadedResumeDraft', JSON.stringify(parsedResume));
