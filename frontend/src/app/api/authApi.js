@@ -1,4 +1,4 @@
-﻿const API_BASE_URL = 'http://localhost:8000';
+const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000').replace(/\/$/, '');
 
 async function parseError(response) {
   let detail = `Request failed with status ${response.status}`;
